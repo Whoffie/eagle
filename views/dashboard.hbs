@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="/css/main.css" type="text/css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/iconfont/tabler-icons.min.css">
+</head>
+<body>
+  <nav>
+    <ul>
+      <li><a href="/dashboard">Home</a></li>
+      <li><a href="/dashboard/users">Admin</a></li>
+      <li class="secondary"><a href="/logout"><i class="ti ti-logout"></i></a></li>
+      <li class="secondary"><a href="#"><i class="ti ti-settings"></i></a></li>
+    </ul>
+  </nav>
+  <div class="titlecard">
+     <div class="card-inner">
+      <h1>Welcome, {{firstName}}!</h1><br>
+      <h4>Select year</h4>
+      <select class="inline input-half" name="" id=""></select>
+      <button class="btn btn-info inline input-half">Select Year</button>
+      {{!-- <h4><a href="/usermod">Manage My Account Info</a> | <a href="/schedule">See Condo Scheduling</a> | <a href="/logout">Logout</a></h4> --}}
+    </div>
+  </div>
+  <div class="schedule t-wrapper">
+    <table>
+      <tr class="heavy">
+        <th>Week</th>
+        <th>From</th>
+        <th>To</th>
+        <th>Condo Side</th>
+        <th>Scheduled - 2022</th>
+        <th>Actual - 2022</th>
+        <th>Notes</th>
+      </tr>
+      {{#each scheduleData}}
+      {{#ifEquals this.condoSide 0}}
+      <tr>
+        <td>&nbsp;</td>
+        <td>{{this.startDate}}</td>
+        <td>{{this.endDate}}</td>
+        <td>Snowbirds</td>
+        <td><a href="#" class="underline">{{this.groupName}}</a></td>
+        <td><a href="#" class="modal-schedule-{{this.id}}"><i class="ti ti-table-import"></i> {{this.actualGroup}}</a></option></select></td>
+        <td><a href="#"><i class="ti ti-notes"></i></a></td>
+      </tr>
+      {{else}}
+      <tr>
+        <td>{{increment}}</td>
+        <td>{{this.startDate}}</td>
+        <td>{{this.endDate}}</td>
+        <td>Snowkats</td>
+        <td><a href="#" class="underline">{{this.groupName}}</i></a></td>
+        <td><a href="#" class="modal-schedule-{{this.id}}"><i class="ti ti-table-import"></i> {{this.actualGroup}}</a></option></select></td>
+        <td><a href="#"><i class="ti ti-notes"></i></a></td>
+      </tr>
+      {{/ifEquals}}
+      {{headingLoop}}
+      {{/each}}
+    </table>
+  </div>
+</body>
+</html>

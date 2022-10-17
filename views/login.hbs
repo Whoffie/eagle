@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Please Login</title>
+    <meta name="description" content="description">
+    <meta name="author" content="author">
+    <meta name="keywords" content="keywords">
+    <link rel="stylesheet" href="/css/main.css" type="text/css">
+  </head>
+  <body>
+    <div class="main-parent">
+      <div class="main-child">
+        <img src="/img/vailcondoassociates.jpg" alt="Vail Condo Associates">
+        <div class="form-container">
+          <form action="/login" method="post">
+            <div class="field-wrapper">
+              <input type="email" placeholder="Email" name="email" required>
+            </div>
+            <div class="field-wrapper">
+              <input type="password" placeholder="Password" name="password" required>
+            </div>
+            <input type="submit" value="Login">
+          </form>
+        </div>
+        Don't have an account? <a href="/register"> Create a new one</a>.
+        <p class="danger msg">{{error}}</p>
+        <p class="safe">{{success}}</p>
+      </div>
+    </div>
+    <footer>
+      <p>Problems? Please contact <a href="mailto:{{webmaster}}">{{webmaster}}</a></p>
+    </footer>
+  </body>
+</html>

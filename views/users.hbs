@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Users and Groups</title>
+  <link rel="stylesheet" href="/css/main.css" type="text/css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/iconfont/tabler-icons.min.css">
+</head>
+<body>
+  <nav>
+    <ul>
+      <li><a href="/dashboard">Home</a></li>
+      <li><a href="/dashboard/users">Admin</a></li>
+      <li class="secondary"><a href="/logout"><i class="ti ti-logout"></i></a></li>
+      <li class="secondary"><a href="#"><i class="ti ti-settings"></i></a></li>
+    </ul>
+  </nav>
+  <div class="main-parent">
+    <div class="main-child">
+      <h1>User / Group Management</h1>
+      <div class="left-container">
+        <h2 class="spacer">Create New Group</h2>
+        <form action="/group/add" method="post">
+          <div class="field-wrapper">
+            <input type="text" placeholder="Group Name" name="gname" maxlength="100" required>
+            <input type="number" name="snowbirds" class="input-half" placeholder="# of Snowbirds shares" min="0" required>
+            <input type="number" name="snowkats" class="input-half" placeholder="# of Snowkats shares" min="0" required>
+          </div>
+          <div class="field-wrapper">
+            <input type="submit" value="Add Group">
+          </div>
+        </form>
+        <div class="t-wrapper-group">
+          <table>
+            <tr class="heavy">
+              <th>Name</th>
+              <th>Snowbirds</th>
+              <th>Snowkats</th>
+              <th>Edit</th>
+              <th>Delete</th>
+            </tr>
+            {{#each userGroups}}
+            <tr>
+              <td>{{this.groupName}}</td>
+              <td>{{this.snowbirds}}</td>
+              <td>{{this.snowkats}}</td>
+              <td><a href="#" onclick="groupEdit({{this.id}})"><i class="ti ti-edit"></i></a></td>
+              <td><a href="#" class="danger" onclick="groupDelete({{this.id}})"><i class="ti ti-trash"></i></a></td>
+            </tr>
+            {{/each}}
+          </table>
+        </div>
+      </div>
+      <div class="right-container">
+        <h2 class="spacer">Users</h2>
+        <div class="t-wrapper">
+          <table>
+            <tr class="heavy">
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Phone Number</th>
+              <th>Group</th>
+              <th>Edit</th>
+              <th>Delete</th>
+            </tr>
+            {{#each userInfo}}
+            {{#if this.activated}}
+            <tr>
+              <td>{{this.firstName}}</td>
+              <td>{{this.lastName}}</td>
+              <td>{{this.phoneNumber}}</td>
+              <td>{{this.groupName}}</td>
+              <td><a href="#" onclick="userEdit({{this.id}})"><i class="ti ti-edit"></i></a></td>
+              <td><a href="#" class="danger" onclick="userDelete({{this.id}})"><i class="ti ti-trash"></i></a></td>
+            </tr>
+            {{/if}}
+            {{/each}}
+          </table>
+        </div>
+        {{#if activatedUser}}
+        <h2 class="spacer newusers">Incoming Users</h2>
+        <div class="t-wrapper">
+          <table class="info">
+            <tr class="heavy">
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Phone Number</th>
+              <th>Group</th>
+              <th>Accept</th>
+            </tr>
+            {{#each userInfo}}
+            {{#unless this.activated}}
+            <tr>
+              <td>{{this.firstName}}</td>
+              <td>{{this.lastName}}</td>
+              <td>{{this.phoneNumber}}</td>
+              <td>{{this.groupName}}</td>
+              <td><a class="safe" href="/user/add/?userID={{this.id}}"><i class="ti ti-check"></i></a></td>
+            </tr>
+            {{/unless}}
+            {{/each}}
+          </table>
+        </div>
+        {{/if}}
+      </div>
+      <div class="main-parent" style="padding-top: 400px">
+        <div class="main-child">
+          <h2 class="spacer">Schedule Creation</h2>
+          <p class="spacer">Choose the order of condo sides Snowkats and Snowbirds. Both will be compiled into a single schedule list. Changes submitted will be made immediately, so be cautious.</p>
+          <div class="left-container-half">
+            <h2 class="spacer">Snowbirds Schedule</h2>
+            <form action="/schedule/edit" method="post" id="schedule">
+            {{#each userGroups}}
+              {{#if this.snowbirds}}
+              <select name="snowbirds{{sb_increment}}" class="schedule-select">
+                {{#if this.snowbirds}}
+                <option value="" disabled selected>Select a group</option>
+                {{/if}}
+                {{#each ../userGroups}}
+                {{#if this.snowbirds}}
+                <option value="{{this.id}}">{{this.groupName}}</option>
+                {{/if}}
+                {{/each}}
+              </select>
+              {{/if}}
+            {{/each}}
+            </form>
+          </div>
+          <div class="right-container-half">
+            <h2 class="spacer">Snowkats Schedule</h2>
+            {{#each userGroups}}
+              {{#if this.snowkats}}
+              <select name="snowkats{{sk_increment}}" form="schedule" class="schedule-select">
+                {{#if this.snowkats}}
+                <option value="" disabled selected>Select a group</option>
+                {{/if}}
+                {{#each ../userGroups}}
+                {{#if this.snowkats}}
+                <option value="{{this.id}}">{{this.groupName}}</option>
+                {{/if}}
+                {{/each}}
+              </select>
+              {{/if}}
+            {{/each}}
+          </div>
+        </div>
+        <div class="spacer">
+          <select form="schedule" name="year">
+            <option value="2022">2022</option>
+          </select>
+        </div>
+        <button class="btn-info btn-full" form="schedule"><i class="ti ti-calendar-plus"></i> Change Schedule Order</button>
+      </div>
+    </div>
+  </div>
+  {{#each userGroups}}
+  <div class="modal modal-{{this.id}}">
+    <div class="inner inner-{{this.id}}">
+      <div class="spacer">
+        <div class="content">
+          <a href="#"><span class="close" onclick="gpopClose({{this.id}})"><i class="ti ti-square-x"></i></span></a>
+          <h1>Delete Group "{{this.groupName}}"?</h1><br>
+          <h3>Deleting groups may severely impact current the current schedule. The "actual" table schedules will <strong>not</strong> be changed in order to preserve the actual schedule.</h3>
+        </div>
+      </div>
+      <a href="/group/delete/?groupID={{this.id}}"><button class="btn-danger"><i class="ti ti-trash"></i> Delete</button></a>
+    </div>
+  </div>
+  {{/each}}
+  {{#each userGroups}}
+  <div class="modal modal-edit-{{this.id}}">
+    <div class="inner inner-edit-{{this.id}}">
+      <div class="spacer">
+        <div class="content">
+          <a href="#"><span class="close" onclick="geditClose({{this.id}})"><i class="ti ti-square-x"></i></span></a>
+          <h1>Editing Group "{{this.groupName}}"</h1><br>
+          <form action="/group/edit" method="post">
+            <div class="spacer">
+              <label>Group Name</label>
+              <input type="text" placeholder="Group Name" name="gname" value="{{this.groupName}}" maxlength="100" required>
+            </div>
+            <div class="spacer">
+              <label>Snowbirds Shares</label>
+              <input type="number" name="snowbirds" placeholder="# of Snowbirds shares" min="0" value="{{this.snowbirds}}" required>
+            </div> 
+            <div class="spacer">
+              <label>Snowkats Shares</label>
+              <input type="number" name="snowkats" placeholder="# of Snowkats shares" value="{{this.snowkats}}" min="0" required>
+            </div>
+            <button type="submit" class="btn-full btn-info"><i class="ti ti-edit"></i> Edit Group</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  {{/each}}
+  {{#each userInfo}}
+  <div class="modal user-modal-{{this.id}}">
+    <div class="inner user-inner-{{this.id}}">
+      <div class="spacer">
+        <div class="content">
+          <a href="#"><span class="close" onclick="udelClose({{this.id}})"><i class="ti ti-square-x"></i></span></a>
+          <h1>Remove user {{this.firstName}} {{this.lastName}}?</h1><br>
+          <h3>{{this.firstName}} {{this.lastName}} will be fully removed from this site. This includes this user's attachment to their current group ({{this.groupName}})</h3>
+        </div>
+      </div>
+      <a href="/user/delete/?userID={{this.id}}"><button class="btn-danger normal"><i class="ti ti-trash"></i> Delete User</button></a>
+    </div>
+  </div>
+  {{/each}}
+  {{#each userInfo}}
+  <div class="modal user-modal-edit-{{this.id}}">
+    <div class="inner user-inner-edit-{{this.id}}">
+      <div class="spacer">
+        <div class="content">
+          <a href="#"><span class="close" onclick="ueditClose({{this.id}})"><i class="ti ti-square-x"></i></span></a>
+          <h1>Editing User "{{this.firstName}} {{this.lastName}}"</h1><br>
+          <form action="/user/edit" method="post">
+            <div class="spacer">
+              <label>Email <span class="danger">*</span></label><br>
+              <input type="email" name="email" placeholder="Email" value="{{this.email}}" required>
+            </div>
+            <div class="spacer">
+              <label>First Name <span class="danger">*</span></label><br>
+              <input type="text" name="fname" placeholder="First Name" value="{{this.firstName}}" maxlength="100" required>
+            </div>
+            <div class="spacer">
+              <label>Last Name <span class="danger">*</span></label><br>
+              <input type="text" name="lname" placeholder="Last Name" value="{{this.lastName}}" maxlength="100" required>
+            </div>
+            <div class="spacer">
+              <label>Phone # <span class="danger">*</span></label><br>
+              <input type="number" name="phone" placeholder="Phone #" value="{{this.phoneNumber}}" maxlength="100" required>
+            </div>  
+             <div class="spacer">
+              <label>Address <span class="danger">*</span></label><br>
+              <input type="text" name="address" placeholder="Address" value="{{this.address}}" required>
+            </div>
+            <div class="spacer">
+              <label>Address Line 2</label><br>
+              <input type="text" name="address2" placeholder="Address Line 2" value="{{this.address2}}">
+            </div>
+             <div class="spacer">
+              <label>City <span class="danger">*</span></label><br>
+              <input type="text" name="city" placeholder="City" value="{{this.city}}" required>
+            </div>
+            <div class="spacer">
+              <label>State <span class="danger">*</span></label><br>
+              <input type="text" name="state" placeholder="State" value="{{this.state}}" required>
+            </div>
+            <div class="spacer">
+              <label>Zipcode <span class="danger">*</span></label><br>
+              <input type="number" name="zipcode" placeholder="Zipcode" value="{{this.zipcode}}" min="0" required>
+            </div>
+            <button type="submit" class="btn-info btn-full"><i class="ti ti-edit"></i> Edit User</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  {{/each}}
+  <script type="text/javascript" src="/js/jquery-3.6.0.min.js"></script>
+  <script type="text/javascript" src="/js/modal.js"></script>
+</body>
+</html>
