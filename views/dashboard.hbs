@@ -40,7 +40,7 @@
       {{#each scheduleData}}
       {{#ifEquals this.condoSide 0}}
       <tr>
-        <td>&nbsp;</td>
+        <td>{{increment}}</td>
         <td>{{this.startDate}}</td>
         <td>{{this.endDate}}</td>
         <td>Snowbirds</td>
@@ -50,7 +50,7 @@
       </tr>
       {{else}}
       <tr>
-        <td>{{increment}}</td>
+        <td>&nbsp;</td>
         <td>{{this.startDate}}</td>
         <td>{{this.endDate}}</td>
         <td>Snowkats</td>

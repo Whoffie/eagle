@@ -275,8 +275,10 @@ app.get("/dashboard/users", (req, res) => {
                 con.query(stmt, (err, val) => {
                   if (val.length == 0) {
                     res.render("users", { userGroups: groupInfo, userInfo: userInfo, activated: userInfo[0]?.activated})
+                    console.log("No results")
                   }else {
                     res.render("users", { userGroups: groupInfo, userInfo: userInfo, activated: userInfo[0]?.activated, activatedUserList: true})
+                    console.log("results")
                   }
                 })
             })
@@ -334,6 +336,10 @@ app.post("/schedule/edit", (req, res) => {
         snowbirdSchedule.setDate(1) // Set to January 1st
         snowbirdSchedule.setFullYear(req.body.year) // Set to user-selected year
 
+        var sbendDate = new Date() // copy schedule and add 7 days to get end date
+        sbendDate.setFullYear(req.body.year)
+        sbendDate.setMonth(0)
+
         var weekCount = 0
         
         snowbirds:
@@ -348,15 +354,15 @@ app.post("/schedule/edit", (req, res) => {
                     let smm = String(snowbirdSchedule.getMonth() + 1).padStart(2, '0')
                     let syyyy = snowbirdSchedule.getFullYear()
 
-                    let endDate = snowkatSchedule // copy schedule and add 7 days to get end date // define this variable anew every loop
-                    endDate.setDate(endDate.getDate() + 7)
+                    sbendDate.setDate(snowbirdSchedule.getDate() + 7)
 
-                    let edd = String(endDate.getDate()).padStart(2, '0')
-                    let emm = String(endDate.getMonth() + 1).padStart(2, '0')
-                    let eyyyy = endDate.getFullYear()
+                    let edd = String(sbendDate.getDate()).padStart(2, '0')
+                    let emm = String(sbendDate.getMonth() + 1).padStart(2, '0')
+                    let eyyyy = sbendDate.getFullYear()
+
+                    console.log(emm + "/" + edd + "/" + eyyyy)
     
                     var stmt = "INSERT INTO `schedule` (`startDate`, `groupID`, `groupName`, `year`, `condoSide`, `actualGroup`, `endDate`) VALUES (?, ?, ?, ?, ?, ?, ?)"
-                    console.log(smm + "/" + sdd + "/" + syyyy)
                     con.query(stmt, [smm + "/" + sdd + "/" + syyyy, snowbirdValues[i], val[0].groupName, req.body.year, 0, val[0].groupName, emm + "/" + edd + "/" + eyyyy])
                 })  
                 weekCount++
@@ -367,35 +373,39 @@ app.post("/schedule/edit", (req, res) => {
         }
 
         var snowkatSchedule = new Date()
-        snowkatSchedule.setMonth(0)
-        snowkatSchedule.setDate(1)
         snowkatSchedule.setFullYear(req.body.year)
+        snowkatSchedule.setDate(1)
+        snowkatSchedule.setMonth(0)
+
+        var skendDate = new Date() // copy schedule and add 7 days to get end date
+        skendDate.setFullYear(req.body.year) // reset 
+        skendDate.setDate(1)
+        skendDate.setMonth(0) // reset month
 
         weekCount = 0 // reuse variable for snowkats loop as well
 
-        snowkats: /* See snowbirds label for more comments about functionality */
+        snowkats:
         while (true) { // while true break because this seems to be the least frustrating method for now
             for (let i = 0; i < snowkats.length; i++) {
                 var stmt = "SELECT `groupName` FROM `usergroups` WHERE `id`=?"
                 
-                con.query(stmt, [snowkatValues[i]], (err, val) => {
+                con.query(stmt, [snowkatValues[i]], (err, val) => { 
                     snowkatSchedule.setDate(snowkatSchedule.getDate() + 7)
 
                     let sdd = String(snowkatSchedule.getDate()).padStart(2, '0')
                     let smm = String(snowkatSchedule.getMonth() + 1).padStart(2, '0')
                     let syyyy = snowkatSchedule.getFullYear()
 
-                    let endDate = snowkatSchedule
-                    endDate.setDate(endDate.getDate() + 7)
+                    skendDate.setDate(snowkatSchedule.getDate() + 7)
 
-                    let edd = String(endDate.getDate()).padStart(2, '0')
-                    let emm = String(endDate.getMonth() + 1).padStart(2, '0')
-                    let eyyyy = endDate.getFullYear()
+                    let edd = String(skendDate.getDate()).padStart(2, '0')
+                    let emm = String(skendDate.getMonth() + 1).padStart(2, '0')
+                    let eyyyy = skendDate.getFullYear()
 
+                    console.log(emm + "/" + edd + "/" + eyyyy)
     
                     var stmt = "INSERT INTO `schedule` (`startDate`, `groupID`, `groupName`, `year`, `condoSide`, `actualGroup`, `endDate`) VALUES (?, ?, ?, ?, ?, ?, ?)"
-                    console.log(smm + "/" + sdd + "/" + syyyy)
-                    con.query(stmt, [smm + "/" + sdd + "/" + syyyy, snowbirdValues[i], val[0].groupName, req.body.year, 1, val[0].groupName, emm + "/" + edd + "/" + eyyyy])
+                    con.query(stmt, [smm + "/" + sdd + "/" + syyyy, snowkatValues[i], val[0].groupName, req.body.year, 1, val[0].groupName, emm + "/" + edd + "/" + eyyyy])
                 })  
                 weekCount++
                 if (weekCount == 52) {
@@ -403,7 +413,6 @@ app.post("/schedule/edit", (req, res) => {
                 }           
             }
         }
-        
 
         res.redirect("/dashboard/users")
     }else {
