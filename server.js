@@ -155,38 +155,56 @@ app.get("/dashboard", (req, res) => {
                 var stmt = "SELECT * FROM `schedule` ORDER BY `startDate` ASC"
 
                 con.query(stmt, (err, scheduleData) => {
-                    var increment = 0 // reset increment on page reload
-                    var entryCount = 0 // keep track of rows in schedule table
-    
-                    hbs.registerHelper("increment", function() {
-                        increment += 1
-                        return increment
-                    })
-                    
-                    hbs.registerHelper("headingLoop", function() { /* repeat table header every 10 entries */
-                        entryCount += 1
+                    var stmt = "SELECT DISTINCT `year` FROM `schedule`"
 
-                        if (entryCount == 15) {
-                            entryCount = 0
+                    con.query(stmt, (err, scheduleYears) => {
+                        var increment = 0 // reset increment on page reload
+                        var entryCount = 0 // keep track of rows in schedule table
 
-                            return new hbs.SafeString
-                            (`
-                            <tr class="heavy">
-                                <th>Week</th>
-                                <th>From</th>
-                                <th>To</th>
-                                <th>Condo Side</th>
-                                <th>Scheduled - 2022</th>
-                                <th>Actual - 2022</th>
-                                <th>Notes</th>
-                            </tr>
-                            `)
+                        hbs.registerHelper("increment", function() {
+                            increment += 1
+                            return increment
+                        })
+                        
+                        hbs.registerHelper("headingLoop", function() { /* repeat table header every 10 entries */
+                            entryCount += 1
+
+                            if (entryCount == 14) {
+                                entryCount = 0
+
+                                return new hbs.SafeString
+                                (`
+                                <tr class="heavy">
+                                    <th>Week</th>
+                                    <th>From</th>
+                                    <th>To</th>
+                                    <th>Condo Side</th>
+                                    <th>Scheduled - 2022</th>
+                                    <th>Actual - 2022</th>
+                                    <th>Notes</th>
+                                </tr>
+                                `)
+                            }
+                        })
+
+                        var yearList = []
+                        let now = new Date() /* move current date to the top of the list */
+
+                        for (let i = 0; i < scheduleYears.length; i++) {
+                            if (parseInt(scheduleYears[i].year) !== now.getFullYear()) {
+                                console.log(parseInt(scheduleYears[i].year) + " != " + now.getFullYear())
+                                yearList.push(scheduleYears[i].year) // push like normal
+                            }else {
+                                console.log(scheduleYears[i].year + " == " + now.getFullYear())
+                                yearList.unshift(scheduleYears[i].year) // move to front
+                            }
                         }
-                    }) 
-                    res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames })
+
+                        res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, x: yearList })
                     })
                 })
             })
+        })
     }else {
         res.redirect("/")
     }
@@ -239,6 +257,7 @@ app.get("/logout", (req, res) => {
         req.session.auth = null
         req.session.uid = null
         req.session.admin = null
+        req.session.error = null
 
         res.redirect("/")
     }else {
@@ -359,8 +378,6 @@ app.post("/schedule/edit", (req, res) => {
                     let edd = String(sbendDate.getDate()).padStart(2, '0')
                     let emm = String(sbendDate.getMonth() + 1).padStart(2, '0')
                     let eyyyy = sbendDate.getFullYear()
-
-                    console.log(emm + "/" + edd + "/" + eyyyy)
     
                     var stmt = "INSERT INTO `schedule` (`startDate`, `groupID`, `groupName`, `year`, `condoSide`, `actualGroup`, `endDate`) VALUES (?, ?, ?, ?, ?, ?, ?)"
                     con.query(stmt, [smm + "/" + sdd + "/" + syyyy, snowbirdValues[i], val[0].groupName, req.body.year, 0, val[0].groupName, emm + "/" + edd + "/" + eyyyy])
@@ -401,8 +418,6 @@ app.post("/schedule/edit", (req, res) => {
                     let edd = String(skendDate.getDate()).padStart(2, '0')
                     let emm = String(skendDate.getMonth() + 1).padStart(2, '0')
                     let eyyyy = skendDate.getFullYear()
-
-                    console.log(emm + "/" + edd + "/" + eyyyy)
     
                     var stmt = "INSERT INTO `schedule` (`startDate`, `groupID`, `groupName`, `year`, `condoSide`, `actualGroup`, `endDate`) VALUES (?, ?, ?, ?, ?, ?, ?)"
                     con.query(stmt, [smm + "/" + sdd + "/" + syyyy, snowkatValues[i], val[0].groupName, req.body.year, 1, val[0].groupName, emm + "/" + edd + "/" + eyyyy])
