@@ -79,7 +79,7 @@
             {{/each}}
           </table>
         </div>
-        {{#if activatedUser}}
+        {{#if activatedUserList}}
         <h2 class="spacer newusers">Incoming Users</h2>
         <div class="t-wrapper">
           <table class="info">
@@ -148,7 +148,9 @@
         </div>
         <div class="spacer">
           <select form="schedule" name="year">
-            <option value="2022">2022</option>
+            {{#each selectYear}}
+            <option value="{{this}}">{{this}}</option>
+            {{/each}}
           </select>
         </div>
         <button class="btn-info btn-full" form="schedule"><i class="ti ti-calendar-plus"></i> Change Schedule Order</button>

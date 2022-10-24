@@ -21,13 +21,14 @@
      <div class="card-inner">
       <h1>Welcome, {{firstName}}!</h1><br>
       <h4>Select year</h4>
-      <select class="inline input-half" name="yearSelect">
-        {{#each x}}
-        <option value="{{this}}">{{this}}</option>
-        {{/each}}
-      </select>
-      <button class="btn btn-info inline input-half">Select Year</button>
-      {{!-- <h4><a href="/usermod">Manage My Account Info</a> | <a href="/schedule">See Condo Scheduling</a> | <a href="/logout">Logout</a></h4> --}}
+      <form action="/dashboard/filter" method="post">
+        <select class="inline input-half" name="yearSelect" autocomplete="off">
+          {{#each year}}
+          <option value="{{this}}">{{this}}</option>
+          {{/each}}
+        </select>
+        <button class="btn btn-info inline input-half">Select Year</button>
+      </form>
     </div>
   </div>
   <div class="schedule t-wrapper">

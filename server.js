@@ -126,14 +126,14 @@ app.post("/register", (req, res) => {
 
                 con.query(stmt, [req.body.group], (err, groupName) => {
                     if (req.body.address2 !== null) {
-                        var stmt = "INSERT INTO `userData` (`firstName`, `lastName`, `address`, `address2`, `city`, `state`, `zipcode`, `phoneNumber`, `email`, `password`, `userGroup`, `groupName`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-                        con.query(stmt, [req.body.fName, req.body.lName, req.body.address, req.body.address2, req.body.city, req.body.state, req.body.zipcode, req.body.phone, req.body.email, hash, req.body.group, groupName[0].groupName])
+                        var stmt = "INSERT INTO `userData` (`firstName`, `lastName`, `address`, `address2`, `city`, `state`, `zipcode`, `phoneNumber`, `email`, `password`, `userGroup`, `groupName`, `activated`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                        con.query(stmt, [req.body.fName, req.body.lName, req.body.address, req.body.address2, req.body.city, req.body.state, req.body.zipcode, req.body.phone, req.body.email, hash, req.body.group, groupName[0].groupName, 0])
                         
                         req.session.success = "User has successfully been created!"
                         res.redirect("/")
                     }else {
-                        var stmt = "INSERT INTO `userData` (`firstName`, `lastName`, `address`, `city`, `state`, `zipcode`, `phoneNumber`, `email`, `password`, `userGroup`, `groupName`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-                        con.query(stmt, [req.body.fName, req.body.lName, req.body.address, req.body.city, req.body.state, req.body.zipcode, req.body.phone, req.body.email, hash, req.body.group, groupName[0].groupName])
+                        var stmt = "INSERT INTO `userData` (`firstName`, `lastName`, `address`, `city`, `state`, `zipcode`, `phoneNumber`, `email`, `password`, `userGroup`, `groupName`, `activated`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                        con.query(stmt, [req.body.fName, req.body.lName, req.body.address, req.body.city, req.body.state, req.body.zipcode, req.body.phone, req.body.email, hash, req.body.group, groupName[0].groupName, 0])
                         
                         req.session.success = "User has successfully been created!"
                         res.redirect("/")           
@@ -146,63 +146,75 @@ app.post("/register", (req, res) => {
 
 app.get("/dashboard", (req, res) => {
     if (req.session.auth == true && req.session.uid !== null) {
+        var increment = 0 // reset increment on page reload
+        var entryCount = 0 // keep track of rows in schedule table
+
+        hbs.registerHelper("increment", function() {
+            increment += 1
+            return increment
+        })
+        
+        hbs.registerHelper("headingLoop", function() {
+            entryCount += 1
+
+            if (entryCount == 14) {
+                entryCount = 0
+
+                return new hbs.SafeString(`<tr class="heavy"><th>Week</th><th>From</th><th>To</th><th>Condo Side</th><th>Scheduled - 2022</th><th>Actual - 2022</th><th>Notes</th></tr>`)
+            }
+        })
+
         var stmt = "SELECT `firstName` FROM `userdata` WHERE `id`=?"
 
         con.query(stmt, [req.session.uid], (err, val) => {
-            var stmt = "SELECT * FROM `usergroups` ORDER BY `groupName` ASC"
+            var stmt = "SELECT * FROM `usergroups` ORDER BY `startDate`" // order by condoSide as well so table index is formatted correctly on frontend
 
             con.query(stmt, (err, groupNames) => {
-                var stmt = "SELECT * FROM `schedule` ORDER BY `startDate` ASC"
+                if (!req.session.filter) {
+                    var stmt = "SELECT * FROM `schedule` ORDER BY `startDate` ASC, `condoSide`"
 
-                con.query(stmt, (err, scheduleData) => {
-                    var stmt = "SELECT DISTINCT `year` FROM `schedule`"
-
-                    con.query(stmt, (err, scheduleYears) => {
-                        var increment = 0 // reset increment on page reload
-                        var entryCount = 0 // keep track of rows in schedule table
-
-                        hbs.registerHelper("increment", function() {
-                            increment += 1
-                            return increment
-                        })
-                        
-                        hbs.registerHelper("headingLoop", function() { /* repeat table header every 10 entries */
-                            entryCount += 1
-
-                            if (entryCount == 14) {
-                                entryCount = 0
-
-                                return new hbs.SafeString
-                                (`
-                                <tr class="heavy">
-                                    <th>Week</th>
-                                    <th>From</th>
-                                    <th>To</th>
-                                    <th>Condo Side</th>
-                                    <th>Scheduled - 2022</th>
-                                    <th>Actual - 2022</th>
-                                    <th>Notes</th>
-                                </tr>
-                                `)
+                    con.query(stmt, (err, scheduleData) => {
+                        var stmt = "SELECT DISTINCT `year` FROM `schedule`"
+    
+                        con.query(stmt, (err, scheduleYears) => {
+                            var yearList = []
+                            let now = new Date() /* move current date to the top of the list */
+    
+                            for (let i = 0; i < scheduleYears.length; i++) {
+                                if (parseInt(scheduleYears[i].year) !== now.getFullYear()) {
+                                    yearList.push(scheduleYears[i].year) // push like normal
+                                }else {
+                                    yearList.unshift(scheduleYears[i].year) // move current year to the back if no default filter is selected
+                                }
                             }
+    
+                            res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, year: yearList, setYear: now.getFullYear() })
                         })
-
-                        var yearList = []
-                        let now = new Date() /* move current date to the top of the list */
-
-                        for (let i = 0; i < scheduleYears.length; i++) {
-                            if (parseInt(scheduleYears[i].year) !== now.getFullYear()) {
-                                console.log(parseInt(scheduleYears[i].year) + " != " + now.getFullYear())
-                                yearList.push(scheduleYears[i].year) // push like normal
-                            }else {
-                                console.log(scheduleYears[i].year + " == " + now.getFullYear())
-                                yearList.unshift(scheduleYears[i].year) // move to front
-                            }
-                        }
-
-                        res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, x: yearList })
                     })
-                })
+                }else {
+                    var stmt = "SELECT * FROM `schedule` WHERE `year`=? ORDER BY `startDate` ASC, `condoSide`"
+
+                    con.query(stmt, [req.session.filter], (err, scheduleData) => {
+                        var stmt = "SELECT DISTINCT `year` FROM `schedule`"
+    
+                        con.query(stmt, (err, scheduleYears) => {    
+                            var yearList = []
+                            let now = new Date()
+    
+                            for (let i = 0; i < scheduleYears.length; i++) {
+                                yearList.push(scheduleYears[i].year)
+                            }
+                            
+                            let yearIndex = yearList.indexOf(req.session.filter) // assume we've already generated the selected year
+                            yearList.splice(yearIndex, 1)
+                            yearList.unshift(req.session.filter)
+
+                            
+                            res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, year: yearList, setYear: req.session.filter })
+                            req.session.filter = null // kill filter variable
+                        })
+                    })
+                }
             })
         })
     }else {
@@ -257,7 +269,6 @@ app.get("/logout", (req, res) => {
         req.session.auth = null
         req.session.uid = null
         req.session.admin = null
-        req.session.error = null
 
         res.redirect("/")
     }else {
@@ -272,7 +283,6 @@ app.get("/dashboard/users", (req, res) => {
         var sb_inc = -1
         var sk_inc = -1
 
-        /* We need to register these helpers because Handlebars is a massive step back for humanity */
         hbs.registerHelper("sb_increment", function() {
             sb_inc += 1
             return sb_inc
@@ -289,16 +299,25 @@ app.get("/dashboard/users", (req, res) => {
             var stmt = "SELECT * FROM `userdata`"
 
             con.query(stmt, (err, userInfo) => {
-                var stmt = "SELECT * FROM `userdata` WHERE `activated`=null"
+                var stmt = "SELECT * FROM `userdata` WHERE `activated`=0"
 
                 con.query(stmt, (err, val) => {
-                  if (val.length == 0) {
-                    res.render("users", { userGroups: groupInfo, userInfo: userInfo, activated: userInfo[0]?.activated})
-                    console.log("No results")
-                  }else {
-                    res.render("users", { userGroups: groupInfo, userInfo: userInfo, activated: userInfo[0]?.activated, activatedUserList: true})
-                    console.log("results")
-                  }
+                    let futureYears = new Date()
+                    let now = new Date() // so we can keep track of current year
+                    let years = [] // initialize empty array
+
+                    for (let i = 0; i < 5; i++) {
+                        futureYears.setFullYear(now.getFullYear()) // reset so variable i works
+                        futureYears.setFullYear(futureYears.getFullYear() + i)
+
+                        years.push(futureYears.getFullYear())
+                    }
+
+                    if (val.length == 0) {
+                        res.render("users", { userGroups: groupInfo, userInfo: userInfo, activated: userInfo[0]?.activated, selectYear: years})
+                    }else {
+                        res.render("users", { userGroups: groupInfo, userInfo: userInfo, activated: userInfo[0]?.activated, selectYear: years, activatedUserList: true})
+                    }
                 })
             })
         })
@@ -430,6 +449,16 @@ app.post("/schedule/edit", (req, res) => {
         }
 
         res.redirect("/dashboard/users")
+    }else {
+        res.redirect("/")
+    }
+})
+
+app.post("/dashboard/filter", (req, res) => {
+    if (req.session.auth == true && req.session.uid !== null && req.body.yearSelect) { /* Render dashboard like normal, but this time set "setYear" to req.body.yearSelect on render */
+        req.session.filter = req.body.yearSelect
+
+        res.redirect("/dashboard")
     }else {
         res.redirect("/")
     }
