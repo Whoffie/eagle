@@ -153,16 +153,6 @@ app.get("/dashboard", (req, res) => {
             increment += 1
             return increment
         })
-        
-        hbs.registerHelper("headingLoop", function() {
-            entryCount += 1
-
-            if (entryCount == 14) {
-                entryCount = 0
-
-                return new hbs.SafeString(`<tr class="heavy"><th>Week</th><th>From</th><th>To</th><th>Condo Side</th><th>Scheduled - 2022</th><th>Actual - 2022</th><th>Notes</th></tr>`)
-            }
-        })
 
         var stmt = "SELECT `firstName` FROM `userdata` WHERE `id`=?"
 
@@ -187,6 +177,16 @@ app.get("/dashboard", (req, res) => {
                                     yearList.unshift(scheduleYears[i].year) // move current year to the back if no default filter is selected
                                 }
                             }
+
+                            hbs.registerHelper("headingLoop", function() {
+                                entryCount += 1
+                    
+                                if (entryCount == 14) {
+                                    entryCount = 0
+                    
+                                    return new hbs.SafeString(`<tr class="heavy"><th>Week</th><th>From</th><th>To</th><th>Condo Side</th><th>Scheduled - ` + now.getFullYear() + `</th><th>Actual - ` + now.getFullYear() + `</th><th>Notes</th></tr>`)
+                                }
+                            })
     
                             res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, year: yearList, setYear: now.getFullYear() })
                         })
@@ -209,6 +209,15 @@ app.get("/dashboard", (req, res) => {
                             yearList.splice(yearIndex, 1)
                             yearList.unshift(req.session.filter)
 
+                            let filterYear = req.session.filter
+                            hbs.registerHelper("headingLoop", function() {
+                                entryCount += 1
+                    
+                                if (entryCount == 14) {
+                                    entryCount = 0
+                                    return new hbs.SafeString(`<tr class="heavy"><th>Week</th><th>From</th><th>To</th><th>Condo Side</th><th>Scheduled - ` + filterYear + `</th><th>Actual - ` + filterYear + `</th><th>Notes</th></tr>`)
+                                }
+                            })
                             
                             res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, year: yearList, setYear: req.session.filter })
                             req.session.filter = null // kill filter variable
