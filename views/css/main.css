@@ -416,3 +416,9 @@ nav ul li a {
         margin: 60px 60px 60px 60px;
     }
 }
+
+@media screen and (max-width: 1445px) {
+    .titlecard {
+        width: 80%;
+    }
+}

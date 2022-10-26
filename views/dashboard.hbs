@@ -22,12 +22,14 @@
       <h1>Welcome, {{firstName}}!</h1><br>
       <h4>Select year</h4>
       <form action="/dashboard/filter" method="post">
-        <select class="inline input-half" name="yearSelect" autocomplete="off">
-          {{#each year}}
-          <option value="{{this}}">{{this}}</option>
-          {{/each}}
-        </select>
-        <button class="btn btn-info inline input-half">Select Year</button>
+        <div class="spacer">
+          <select name="yearSelect" autocomplete="off">
+            {{#each year}}
+            <option value="{{this}}">{{this}}</option>
+            {{/each}}
+          </select>
+        </div>
+        <button class="btn btn-info btn-full">Select Year</button>
       </form>
     </div>
   </div>
