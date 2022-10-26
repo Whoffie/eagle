@@ -148,6 +148,7 @@ app.get("/dashboard", (req, res) => {
     if (req.session.auth == true && req.session.uid !== null) {
         var increment = 0 // reset increment on page reload
         var entryCount = 0 // keep track of rows in schedule table
+        let now = new Date()
 
         hbs.registerHelper("increment", function() {
             increment += 1
@@ -161,9 +162,9 @@ app.get("/dashboard", (req, res) => {
 
             con.query(stmt, (err, groupNames) => {
                 if (!req.session.filter) {
-                    var stmt = "SELECT * FROM `schedule` ORDER BY `startDate` ASC, `condoSide`"
+                    var stmt = "SELECT * FROM `schedule` WHERE `year`=? ORDER BY `startDate` ASC, `condoSide`"
 
-                    con.query(stmt, (err, scheduleData) => {
+                    con.query(stmt, [now.getFullYear()], (err, scheduleData) => {
                         var stmt = "SELECT DISTINCT `year` FROM `schedule`"
     
                         con.query(stmt, (err, scheduleYears) => {
@@ -188,7 +189,7 @@ app.get("/dashboard", (req, res) => {
                                 }
                             })
     
-                            res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, year: yearList, setYear: now.getFullYear() })
+                            res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, year: yearList })
                         })
                     })
                 }else {
@@ -199,8 +200,7 @@ app.get("/dashboard", (req, res) => {
     
                         con.query(stmt, (err, scheduleYears) => {    
                             var yearList = []
-                            let now = new Date()
-    
+
                             for (let i = 0; i < scheduleYears.length; i++) {
                                 yearList.push(scheduleYears[i].year)
                             }
@@ -219,7 +219,7 @@ app.get("/dashboard", (req, res) => {
                                 }
                             })
                             
-                            res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, year: yearList, setYear: req.session.filter })
+                            res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, year: yearList })
                             req.session.filter = null // kill filter variable
                         })
                     })
