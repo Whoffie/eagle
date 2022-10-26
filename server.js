@@ -71,11 +71,11 @@ app.get("/register", (req, res) => {
 /* USER ACTIONS */
 
 app.post("/login", (req, res) => {
-    var stmt = "SELECT `email` FROM `userData` WHERE `email`=?"
+    var stmt = "SELECT `email` FROM `userdata` WHERE `email`=?"
 
     con.query(stmt, [req.body.email], (err, val) => {
         if (val.length !== 0) {
-            var stmt = "SELECT `id`, `password` FROM `userData` WHERE `email`=?"
+            var stmt = "SELECT `id`, `password` FROM `userdata` WHERE `email`=?"
 
             con.query(stmt, [req.body.email], (err, val) => {
                 bcrypt.compare(req.body.password, val[0]?.password, function(err, result) {
@@ -110,7 +110,7 @@ app.post("/login", (req, res) => {
 /* Register a new user */
 
 app.post("/register", (req, res) => {
-    var stmt = "SELECT * FROM `userData` WHERE `email`=?"
+    var stmt = "SELECT * FROM `userdata` WHERE `email`=?"
 
     con.query(stmt, [req.body.email], (err, val) => {
         if (val.length !== 0) {
@@ -126,13 +126,13 @@ app.post("/register", (req, res) => {
 
                 con.query(stmt, [req.body.group], (err, groupName) => {
                     if (req.body.address2 !== null) {
-                        var stmt = "INSERT INTO `userData` (`firstName`, `lastName`, `address`, `address2`, `city`, `state`, `zipcode`, `phoneNumber`, `email`, `password`, `userGroup`, `groupName`, `activated`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                        var stmt = "INSERT INTO `userdata` (`firstName`, `lastName`, `address`, `address2`, `city`, `state`, `zipcode`, `phoneNumber`, `email`, `password`, `userGroup`, `groupName`, `activated`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
                         con.query(stmt, [req.body.fName, req.body.lName, req.body.address, req.body.address2, req.body.city, req.body.state, req.body.zipcode, req.body.phone, req.body.email, hash, req.body.group, groupName[0].groupName, 0])
                         
                         req.session.success = "User has successfully been created!"
                         res.redirect("/")
                     }else {
-                        var stmt = "INSERT INTO `userData` (`firstName`, `lastName`, `address`, `city`, `state`, `zipcode`, `phoneNumber`, `email`, `password`, `userGroup`, `groupName`, `activated`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                        var stmt = "INSERT INTO `userdata` (`firstName`, `lastName`, `address`, `city`, `state`, `zipcode`, `phoneNumber`, `email`, `password`, `userGroup`, `groupName`, `activated`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
                         con.query(stmt, [req.body.fName, req.body.lName, req.body.address, req.body.city, req.body.state, req.body.zipcode, req.body.phone, req.body.email, hash, req.body.group, groupName[0].groupName, 0])
                         
                         req.session.success = "User has successfully been created!"
