@@ -5,7 +5,7 @@ const sql = require("mysql")
 const session = require("express-session")
 const sqlStore = require("express-mysql-session")(session)
 const bcrypt = require("bcrypt")
-const port = 80
+const port = 8080
 const { resolve } = require("path");
 
 con = sql.createConnection({ // credentials for connection to database
