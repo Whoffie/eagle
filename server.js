@@ -158,7 +158,7 @@ app.get("/dashboard", (req, res) => {
         var stmt = "SELECT `firstName` FROM `userdata` WHERE `id`=?"
 
         con.query(stmt, [req.session.uid], (err, val) => {
-            var stmt = "SELECT * FROM `usergroups` ORDER BY `startDate`" // order by condoSide as well so table index is formatted correctly on frontend
+            var stmt = "SELECT * FROM `usergroups`" // order by condoSide as well so table index is formatted correctly on frontend
 
             con.query(stmt, (err, groupNames) => {
                 if (!req.session.filter) {
@@ -302,7 +302,7 @@ app.get("/dashboard/users", (req, res) => {
             return sk_inc
         })
 
-        var stmt = "SELECT * FROM `userGroups` ORDER BY `groupName` ASC"
+        var stmt = "SELECT * FROM `usergroups` ORDER BY `groupName` ASC"
 
         con.query(stmt, (err, groupInfo) => {
             var stmt = "SELECT * FROM `userdata`"
@@ -463,11 +463,22 @@ app.post("/schedule/edit", (req, res) => {
     }
 })
 
-app.post("/dashboard/filter", (req, res) => {
-    if (req.session.auth == true && req.session.uid !== null && req.body.yearSelect) { /* Render dashboard like normal, but this time set "setYear" to req.body.yearSelect on render */
+app.post("/actual/edit", (req, res) => { /* modify actual group for a schedule row */
+    if (req.session.auth == true && req.session.uid !== null && req.body.id && req.body.newActual) {
+         var stmt = "UPDATE `schedule` SET `actualGroup`=? WHERE `id`=?"
+
+         con.query(stmt, [req.body.newActual, req.body.id])
+         res.redirect("/dashboard") /* updated! */
+    }else {
+        res.redirect("/")
+    }
+})
+
+app.post("/dashboard/filter", (req, res) => { /* handler for filter requests */
+    if (req.session.auth == true && req.session.uid !== null && req.body.yearSelect) { 
         req.session.filter = req.body.yearSelect
 
-        res.redirect("/dashboard")
+        res.redirect("/dashboard") /* redirect to the dashboard with new filter session variable (it will be destroyed when finished with) */
     }else {
         res.redirect("/")
     }

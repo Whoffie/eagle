@@ -45,3 +45,14 @@ function ueditClose(uid) {
     $(".user-inner-edit-" + uid).hide()
     $(".user-modal-edit-" + uid).hide()
 }
+
+function actualModal(uid) {
+    $(".actual-modal-" + uid).show(300, function() {
+        $(".actual-inner-" + uid).show(300)
+    })
+}
+
+function actualClose(uid) {
+    $(".actual-modal-" + uid).hide()
+    $(".actual-inner-" + uid).hide()
+}

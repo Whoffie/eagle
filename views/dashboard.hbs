@@ -50,7 +50,7 @@
         <td>{{this.endDate}}</td>
         <td>Snowbirds</td>
         <td><a href="#" class="underline">{{this.groupName}}</a></td>
-        <td><a href="#" class="modal-schedule-{{this.id}}"><i class="ti ti-table-import"></i> {{this.actualGroup}}</a></option></select></td>
+        <td><strong><a href="#" onclick="actualModal({{this.id}})" class="modal-schedule-{{this.id}}"><i class="ti ti-table-import"></i> {{this.actualGroup}}</a></strong></option></td>
         <td><a href="#"><i class="ti ti-notes"></i></a></td>
       </tr>
       {{else}}
@@ -60,7 +60,7 @@
         <td>{{this.endDate}}</td>
         <td>Snowkats</td>
         <td><a href="#" class="underline">{{this.groupName}}</i></a></td>
-        <td><a href="#" class="modal-schedule-{{this.id}}"><i class="ti ti-table-import"></i> {{this.actualGroup}}</a></option></select></td>
+        <td><strong><a href="#" onclick="actualModal({{this.id}})" class="modal-schedule-{{this.id}}"><i class="ti ti-table-import"></i> {{this.actualGroup}}</a></strong></option></select></td>
         <td><a href="#"><i class="ti ti-notes"></i></a></td>
       </tr>
       {{/ifEquals}}
@@ -68,5 +68,31 @@
       {{/each}}
     </table>
   </div>
+  {{#each scheduleData}}
+  <div class="modal actual-modal-{{this.id}}">
+    <div class="inner actual-inner-{{this.id}}">
+      <div class="spacer">
+        <div class="content">
+          <a href="#"><span class="close" onclick="actualClose({{this.id}})"><i class="ti ti-square-x"></i></span></a>
+          <h1>Changing Planned Schedule From "{{this.groupName}}" on {{this.startDate}}</h1>
+          <h3>Ensure that both parties involved in this switch approve of it. This change will be logged.</h3><br>
+          <form action="/actual/edit" method="post">
+            <div class="spacer">
+              <select name="newActual">
+                {{#each ../userGroups}}
+                <option value="{{this.groupName}}">{{this.groupName}}</option>
+                {{/each}}
+              </select>
+            </div>
+            <input type="hidden" name="id" value="{{this.id}}">
+            <button type="submit" class="btn-info btn-full"><i class="ti ti-edit"></i> Change Group</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  {{/each}}
+  <script type="text/javascript" src="/js/jquery-3.6.0.min.js"></script>
+  <script src="js/modal.js" type="text/javascript"></script>
 </body>
 </html>
