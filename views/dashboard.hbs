@@ -46,25 +46,49 @@
       </tr>
       {{#each scheduleData}}
       {{#ifEquals this.condoSide 0}}
+      {{#ifEquals this.groupName this.actualGroup}}
       <tr>
         <td>{{increment}}</td>
         <td>{{this.startDate}}</td>
         <td>{{this.endDate}}</td>
         <td>Snowbirds</td>
-        <td><a href="#" class="underline">{{this.groupName}}</a></td>
+        <td>{{this.groupName}}</td>
         <td><strong><a href="#" onclick="actualModal({{this.id}})" class="modal-schedule-{{this.id}}"><i class="ti ti-table-import"></i> {{this.actualGroup}}</a></strong></option></td>
         <td><a href="#" onclick="notesModal({{this.id}})"><i class="ti ti-notes"></i></a></td>
       </tr>
       {{else}}
+      <tr class="highlight-row">
+        <td>{{increment}}</td>
+        <td>{{this.startDate}}</td>
+        <td>{{this.endDate}}</td>
+        <td>Snowbirds</td>
+        <td>{{this.groupName}}</td>
+        <td><strong><a href="#" onclick="actualModal({{this.id}})" class="modal-schedule-{{this.id}}"><i class="ti ti-table-import"></i> {{this.actualGroup}}</a></strong></option></td>
+        <td><a href="#" onclick="notesModal({{this.id}})"><i class="ti ti-notes"></i></a></td>
+      </tr>
+      {{/ifEquals}}
+      {{else}}
+      {{#ifEquals this.groupName this.actualGroup}}
       <tr>
         <td>&nbsp;</td>
         <td>{{this.startDate}}</td>
         <td>{{this.endDate}}</td>
         <td>Snowkats</td>
-        <td><a href="#" class="underline">{{this.groupName}}</i></a></td>
+        <td>{{this.groupName}}</td>
         <td><strong><a href="#" onclick="actualModal({{this.id}})" class="modal-schedule-{{this.id}}"><i class="ti ti-table-import"></i> {{this.actualGroup}}</a></strong></option></select></td>
         <td><a href="#" onclick="notesModal({{this.id}})"><i class="ti ti-notes"></i></a></td>
       </tr>
+      {{else}}
+      <tr class="highlight-row">
+        <td>&nbsp;</td>
+        <td>{{this.startDate}}</td>
+        <td>{{this.endDate}}</td>
+        <td>Snowkats</td>
+        <td>{{this.groupName}}</td>
+        <td><strong><a href="#" onclick="actualModal({{this.id}})" class="modal-schedule-{{this.id}}"><i class="ti ti-table-import"></i> {{this.actualGroup}}</a></strong></option></select></td>
+        <td><a href="#" onclick="notesModal({{this.id}})"><i class="ti ti-notes"></i></a></td>
+      </tr>
+      {{/ifEquals}}
       {{/ifEquals}}
       {{headingLoop}}
       {{/each}}

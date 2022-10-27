@@ -276,6 +276,10 @@ table {
     text-align: center;
 }
 
+.highlight-row {
+    background-color: yellow;
+}
+
 table tr {
     border-bottom: black 1px solid;
 }
