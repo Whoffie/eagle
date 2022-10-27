@@ -293,6 +293,7 @@ td .underline {
 .schedule {
     margin-left: 30px;
     margin-right: 30px;
+    margin-bottom: 50px;
 }
 
 .newusers {
@@ -312,7 +313,7 @@ nav {
 }
 
 nav ul {
-    padding-top: 10px;
+    margin-top: 8px;
     list-style-type: none;
     width: 100%;
 }

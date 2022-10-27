@@ -189,7 +189,7 @@ app.get("/dashboard", (req, res) => {
                                 }
                             })
     
-                            res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, year: yearList })
+                            res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, year: yearList, setYear: now.getFullYear() })
                         })
                     })
                 }else {
@@ -219,7 +219,7 @@ app.get("/dashboard", (req, res) => {
                                 }
                             })
                             
-                            res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, year: yearList })
+                            res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, year: yearList, setYear: req.session.filter })
                             req.session.filter = null // kill filter variable
                         })
                     })
@@ -464,10 +464,11 @@ app.post("/schedule/edit", (req, res) => {
 })
 
 app.post("/actual/edit", (req, res) => { /* modify actual group for a schedule row */
-    if (req.session.auth == true && req.session.uid !== null && req.body.id && req.body.newActual) {
+    if (req.session.auth == true && req.session.uid !== null && req.body.id && req.body.newActual && req.body.year) {
          var stmt = "UPDATE `schedule` SET `actualGroup`=? WHERE `id`=?"
 
          con.query(stmt, [req.body.newActual, req.body.id])
+         req.session.filter = req.body.year // so we don't default to current year when this field is updated
          res.redirect("/dashboard") /* updated! */
     }else {
         res.redirect("/")
