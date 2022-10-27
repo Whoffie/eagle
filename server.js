@@ -463,12 +463,24 @@ app.post("/schedule/edit", (req, res) => {
     }
 })
 
-app.post("/actual/edit", (req, res) => { /* modify actual group for a schedule row */
+app.post("/schedule/edit/actual", (req, res) => { /* modify actual group for a schedule row */
     if (req.session.auth == true && req.session.uid !== null && req.body.id && req.body.newActual && req.body.year) {
          var stmt = "UPDATE `schedule` SET `actualGroup`=? WHERE `id`=?"
 
          con.query(stmt, [req.body.newActual, req.body.id])
          req.session.filter = req.body.year // so we don't default to current year when this field is updated
+         res.redirect("/dashboard") /* updated! */
+    }else {
+        res.redirect("/")
+    }
+})
+
+app.post("/schedule/edit/notes", (req, res) => { /* modify actual group for a schedule row */
+    if (req.session.auth == true && req.session.uid !== null && req.body.id && req.body.year) {
+         var stmt = "UPDATE `schedule` SET `notes`=? WHERE `id`=?"
+
+         con.query(stmt, [req.body.notes, req.body.id])
+         req.session.filter = req.body.year
          res.redirect("/dashboard") /* updated! */
     }else {
         res.redirect("/")

@@ -56,3 +56,14 @@ function actualClose(uid) {
     $(".actual-modal-" + uid).hide()
     $(".actual-inner-" + uid).hide()
 }
+
+function notesModal(uid) {
+    $(".notes-modal-" + uid).show(300, function() {
+        $(".notes-inner-" + uid).show(300)
+    })
+}
+
+function notesClose(uid) {
+    $(".notes-modal-" + uid).hide()
+    $(".notes-inner-" + uid).hide()
+}

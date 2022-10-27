@@ -53,7 +53,7 @@
         <td>Snowbirds</td>
         <td><a href="#" class="underline">{{this.groupName}}</a></td>
         <td><strong><a href="#" onclick="actualModal({{this.id}})" class="modal-schedule-{{this.id}}"><i class="ti ti-table-import"></i> {{this.actualGroup}}</a></strong></option></td>
-        <td><a href="#"><i class="ti ti-notes"></i></a></td>
+        <td><a href="#" onclick="notesModal({{this.id}})"><i class="ti ti-notes"></i></a></td>
       </tr>
       {{else}}
       <tr>
@@ -63,7 +63,7 @@
         <td>Snowkats</td>
         <td><a href="#" class="underline">{{this.groupName}}</i></a></td>
         <td><strong><a href="#" onclick="actualModal({{this.id}})" class="modal-schedule-{{this.id}}"><i class="ti ti-table-import"></i> {{this.actualGroup}}</a></strong></option></select></td>
-        <td><a href="#"><i class="ti ti-notes"></i></a></td>
+        <td><a href="#" onclick="notesModal({{this.id}})"><i class="ti ti-notes"></i></a></td>
       </tr>
       {{/ifEquals}}
       {{headingLoop}}
@@ -76,9 +76,9 @@
       <div class="spacer">
         <div class="content">
           <a href="#"><span class="close" onclick="actualClose({{this.id}})"><i class="ti ti-square-x"></i></span></a>
-          <h1>Changing Planned Schedule From "{{this.groupName}}" on {{this.startDate}}</h1>
+          <h1>Changing Planned Schedule From "{{this.actualGroup}}" on {{this.startDate}}</h1>
           <h3>Ensure that both parties involved in this switch approve of it. This change will be logged.</h3><br>
-          <form action="/actual/edit" method="post">
+          <form action="/schedule/edit/actual" method="post">
             <div class="spacer">
               <select name="newActual">
                 {{#each ../userGroups}}
@@ -89,6 +89,26 @@
             <input type="hidden" name="id" value="{{this.id}}">
             <input type="hidden" name="year" value="{{../setYear}}">
             <button type="submit" class="btn-info btn-full"><i class="ti ti-edit"></i> Change Group</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  {{/each}}
+  {{#each scheduleData}}
+  <div class="modal notes-modal-{{this.id}}">
+    <div class="inner notes-inner-{{this.id}}">
+      <div class="spacer">
+        <div class="content">
+          <a href="#"><span class="close" onclick="notesClose({{this.id}})"><i class="ti ti-square-x"></i></span></a>
+          <div class="spacer">
+            <h1>Editing Notes for "{{this.actualGroup}}" on {{this.startDate}}</h1>
+          </div>
+          <form action="/schedule/edit/notes" method="post">
+            <textarea name="notes" rows="10">{{this.notes}}</textarea>
+            <input type="hidden" name="id" value="{{this.id}}">
+            <input type="hidden" name="year" value="{{../setYear}}">
+            <button type="submit" class="btn-info btn-full"><i class="ti ti-edit"></i> Edit Notes</button>
           </form>
         </div>
       </div>

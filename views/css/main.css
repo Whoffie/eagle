@@ -35,6 +35,12 @@ form {
     padding-bottom: 10px;
 }
 
+form textarea {
+    width: 100%;
+    resize: none;
+    box-sizing: border-box;
+}
+
 .form-container {
     width: 800px;
     margin: 0 auto;
