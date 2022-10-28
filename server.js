@@ -338,7 +338,7 @@ app.get("/dashboard/users", (req, res) => {
 /* SCHEDULE */
 
 app.post("/schedule/edit", (req, res) => {
-    if (req.session.auth) {
+    if (req.session.auth && req.body.year) {
         var snowbirds = [] // arrays snowbirds and snowkats store the names of the input fields
         var snowkats = []
         var snowbirdValues = [] // arrays snowbirdValues and snowkatValues store the contents of aforementioned input fields
@@ -351,18 +351,10 @@ app.post("/schedule/edit", (req, res) => {
 
         con.query(stmt, [req.body.year])
 
-        var lastSaturday = new Date()
-        lastSaturday.setMonth(11) // set month to December
-        lastSaturday.setFullYear(req.body.year)
-        lastSaturday.setDate(31) // set to last day of December
-
         var firstSaturday = new Date()
         firstSaturday.setMonth(0)
-        lastSaturday.setFullYear(req.body.year)
-
-        while (lastSaturday.getDay() !== 6) { // iterate backwards through month until we hit a Saturday
-            lastSaturday.setDate(lastSaturday.getDate() - 1)
-        }
+        firstSaturday.setDate(1)
+        firstSaturday.setFullYear(req.body.year)
 
         while (firstSaturday.getDay() !== 6) { // get first saturday of the year
             firstSaturday.setDate(firstSaturday.getDate() + 1)
@@ -380,7 +372,7 @@ app.post("/schedule/edit", (req, res) => {
 
         var snowbirdSchedule = new Date() 
         snowbirdSchedule.setMonth(0) // Set to January
-        snowbirdSchedule.setDate(1) // Set to January 1st
+        snowbirdSchedule.setDate(firstSaturday.getDate()) // Set to first Saturday
         snowbirdSchedule.setFullYear(req.body.year) // Set to user-selected year
 
         var sbendDate = new Date() // copy schedule and add 7 days to get end date
@@ -395,8 +387,6 @@ app.post("/schedule/edit", (req, res) => {
                 var stmt = "SELECT `groupName` FROM `usergroups` WHERE `id`=?"
                 
                 con.query(stmt, [snowbirdValues[i]], (err, val) => { 
-                    snowbirdSchedule.setDate(snowbirdSchedule.getDate() + 7)
-
                     let sdd = String(snowbirdSchedule.getDate()).padStart(2, '0')
                     let smm = String(snowbirdSchedule.getMonth() + 1).padStart(2, '0')
                     let syyyy = snowbirdSchedule.getFullYear()
@@ -409,6 +399,8 @@ app.post("/schedule/edit", (req, res) => {
     
                     var stmt = "INSERT INTO `schedule` (`startDate`, `groupID`, `groupName`, `year`, `condoSide`, `actualGroup`, `endDate`) VALUES (?, ?, ?, ?, ?, ?, ?)"
                     con.query(stmt, [smm + "/" + sdd + "/" + syyyy, snowbirdValues[i], val[0].groupName, req.body.year, 0, val[0].groupName, emm + "/" + edd + "/" + eyyyy])
+
+                    snowbirdSchedule.setDate(snowbirdSchedule.getDate() + 7)
                 })  
                 weekCount++
                 if (weekCount == 52) {
@@ -419,7 +411,7 @@ app.post("/schedule/edit", (req, res) => {
 
         var snowkatSchedule = new Date()
         snowkatSchedule.setFullYear(req.body.year)
-        snowkatSchedule.setDate(1)
+        snowkatSchedule.setDate(firstSaturday.getDate())
         snowkatSchedule.setMonth(0)
 
         var skendDate = new Date() // copy schedule and add 7 days to get end date
@@ -435,8 +427,6 @@ app.post("/schedule/edit", (req, res) => {
                 var stmt = "SELECT `groupName` FROM `usergroups` WHERE `id`=?"
                 
                 con.query(stmt, [snowkatValues[i]], (err, val) => { 
-                    snowkatSchedule.setDate(snowkatSchedule.getDate() + 7)
-
                     let sdd = String(snowkatSchedule.getDate()).padStart(2, '0')
                     let smm = String(snowkatSchedule.getMonth() + 1).padStart(2, '0')
                     let syyyy = snowkatSchedule.getFullYear()
@@ -449,6 +439,8 @@ app.post("/schedule/edit", (req, res) => {
     
                     var stmt = "INSERT INTO `schedule` (`startDate`, `groupID`, `groupName`, `year`, `condoSide`, `actualGroup`, `endDate`) VALUES (?, ?, ?, ?, ?, ?, ?)"
                     con.query(stmt, [smm + "/" + sdd + "/" + syyyy, snowkatValues[i], val[0].groupName, req.body.year, 1, val[0].groupName, emm + "/" + edd + "/" + eyyyy])
+
+                    snowkatSchedule.setDate(snowkatSchedule.getDate() + 7)
                 })  
                 weekCount++
                 if (weekCount == 52) {
