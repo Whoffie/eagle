@@ -67,3 +67,26 @@ function notesClose(uid) {
     $(".notes-modal-" + uid).hide()
     $(".notes-inner-" + uid).hide()
 }
+
+function settingsModal() {
+    $("#settings").show(300) 
+    $("#settings-inner").show(300)
+}
+
+function settingsClose() {
+    $("#settings").hide()
+    $("#settings-inner").hide()
+}
+
+function settingsRestore() { // no animation
+    $("#settings").show() 
+    $("#settings-inner").show()
+}
+
+$(document).ready(function() { // restore modal states
+    console.log(window.location.search.substring(1)) // splice off the '?'
+    
+    if (window.location.search.substring(1) == "modal=settings") {
+        settingsRestore()
+    }
+})

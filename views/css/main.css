@@ -99,6 +99,16 @@ input[type="number"] {
     box-sizing: border-box;
 }
 
+.normal {
+    width: 50% !important;
+}
+
+.small { /* use for buttons */
+    width: auto !important;
+    padding: 2px;
+    height: 30px;
+}
+
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     -webkit-appearance: none;
@@ -274,6 +284,7 @@ table {
     border: black 1px solid;
     border-collapse: collapse; 
     text-align: center;
+    color: black;
 }
 
 .highlight-row {
@@ -286,6 +297,7 @@ table tr {
 
 table .heavy {
     border: black 2px solid;
+    color: black;
 }
 
 tr, th, td {
@@ -349,6 +361,10 @@ nav ul li a {
     font-weight: bolder;
 }
 
+.warning {
+    color: orange;
+}
+
 .spacer {
     margin-bottom: 10px;
 }
@@ -376,25 +392,25 @@ nav ul li a {
     left: 0;
     top: 0;
     padding: 8% 8% 8% 8%;
-  }
+}
   
-  .modal .inner {
+.modal .inner {
     background-color: #10181c;
-    width: 85%;
+    width: 80%;
     color: white;
     padding: 15px 15px 15px 15px;
     border-radius: 6px;
-  }
+}
   
-  .modal .close {
+.modal .close {
     float: right;
     color: red !important;
     text-decoration: none;
-  }
+}
   
-  .active {
+.active {
     display: block;
-  }
+}
 
 @media screen and (max-width: 946px) {
     .form-container {
