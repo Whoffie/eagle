@@ -70,7 +70,7 @@ function notesClose(uid) {
 
 function settingsModal() {
     $("#settings").show(300) 
-    $("#settings-inner").show(300)
+    $("#settings-inner").show(100)
 }
 
 function settingsClose() {

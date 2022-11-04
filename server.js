@@ -260,6 +260,19 @@ app.get("/user/add", (req, res) => {
     }
 })
 
+app.get("/user/deny", (req ,res) => {
+    if (req.session.auth) {
+        if (req.query.userID) {
+            var stmt = "DELETE FROM `userdata` WHERE `id`=?"
+
+            con.query(stmt, [req.query.userID])
+            res.redirect("/dashboard/users")
+        }else {
+            res.redirect("/dashboard/users")
+        }
+    }
+})
+
 app.post("/user/edit", (req, res) => {
     if (req.session.auth) {        
         var stmt = "UPDATE `userdata` SET `firstName`=?, `lastName`=?, `address`=?, `address2`=?, `city`=?, `state`=?, `zipcode`=?, `phoneNumber`=?, `email`=?"
@@ -322,11 +335,11 @@ app.get("/dashboard/users", (req, res) => {
             var stmt = "SELECT * FROM `userdata`"
 
             con.query(stmt, (err, userInfo) => {
-                var stmt = "SELECT * FROM `userdata` WHERE `activated`=0"
-
                 var stmt = "SELECT `value` FROM `settings` WHERE `setting`='webmaster'"
 
                 con.query(stmt, (err, webmaster) => {
+                    var stmt = "SELECT * FROM `userdata` WHERE `activated`=0"
+
                     con.query(stmt, (err, val) => {
                         let futureYears = new Date()
                         let now = new Date() // so we can keep track of current year
@@ -354,7 +367,6 @@ app.get("/dashboard/users", (req, res) => {
                             }
     
                             if (val.length == 0) {
-                                res.render("users", { userGroups: groupInfo, userInfo: userInfo, activated: userInfo[0]?.activated, selectYear: years, year: yearList.sort() })
                                 if (webmaster.length !== 0) {
                                     res.render("users", { userGroups: groupInfo, userInfo: userInfo, activated: userInfo[0]?.activated, selectYear: years, year: yearList.sort(), webmaster: webmaster[0].value })
                                 }else {

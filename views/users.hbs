@@ -19,7 +19,6 @@
   </nav>
   <div class="main-parent">
     <div class="main-child">
-      <h1>User / Group Management</h1>
       <div class="left-container">
         <h2 class="spacer">Create New Group</h2>
         <form action="/group/add" method="post">
@@ -89,6 +88,7 @@
               <th>Phone Number</th>
               <th>Group</th>
               <th>Accept</th>
+              <th>Deny</th>
             </tr>
             {{#each userInfo}}
             {{#unless this.activated}}
@@ -98,6 +98,7 @@
               <td>{{this.phoneNumber}}</td>
               <td>{{this.groupName}}</td>
               <td><a class="safe" href="/user/add/?userID={{this.id}}"><i class="ti ti-check"></i></a></td>
+              <td><a class="danger" href="/user/deny/?userID={{this.id}}"><i class="ti ti-x"></i></a></td>
             </tr>
             {{/unless}}
             {{/each}}
@@ -105,56 +106,57 @@
         </div>
         {{/if}}
       </div>
-      <div class="main-parent" style="padding-top: 400px">
-        <div class="main-child">
-          <h2 class="spacer">Schedule Creation</h2>
-          <p class="spacer">Choose the order of condo sides Snowkats and Snowbirds. Both will be compiled into a single schedule list. Changes submitted will be made immediately, so be cautious.</p>
-          <div class="left-container-half">
-            <h2 class="spacer">Snowbirds Schedule</h2>
-            <form action="/schedule/edit" method="post" id="schedule">
-            {{#each userGroups}}
+    </div>
+  </div>
+  <div class="main-parent" style="padding-top: 400px">
+    <div class="main-child">
+      <h2 class="spacer">Schedule Creation</h2>
+        <p class="spacer">Choose the order of condo sides Snowkats and Snowbirds. Both will be compiled into a single schedule list. Changes submitted will be made immediately, so be cautious.</p>
+        <div class="left-container-half">
+          <h2 class="spacer">Snowbirds Schedule</h2>
+          <form action="/schedule/edit" method="post" id="schedule">
+          {{#each userGroups}}
+            {{#if this.snowbirds}}
+            <select name="snowbirds{{sb_increment}}" class="schedule-select">
               {{#if this.snowbirds}}
-              <select name="snowbirds{{sb_increment}}" class="schedule-select">
-                {{#if this.snowbirds}}
-                <option value="" disabled selected>Select a group</option>
-                {{/if}}
-                {{#each ../userGroups}}
-                {{#if this.snowbirds}}
-                <option value="{{this.id}}">{{this.groupName}}</option>
-                {{/if}}
-                {{/each}}
-              </select>
+              <option value="" disabled selected>Select a group</option>
               {{/if}}
-            {{/each}}
-            </form>
-          </div>
-          <div class="right-container-half">
-            <h2 class="spacer">Snowkats Schedule</h2>
-            {{#each userGroups}}
+              {{#each ../userGroups}}
+              {{#if this.snowbirds}}
+              <option value="{{this.id}}">{{this.groupName}}</option>
+              {{/if}}
+              {{/each}}
+            </select>
+            {{/if}}
+          {{/each}}
+          </form>
+        </div>
+        <div class="right-container-half">
+          <h2 class="spacer">Snowkats Schedule</h2>
+          {{#each userGroups}}
+            {{#if this.snowkats}}
+            <select name="snowkats{{sk_increment}}" form="schedule" class="schedule-select">
               {{#if this.snowkats}}
-              <select name="snowkats{{sk_increment}}" form="schedule" class="schedule-select">
-                {{#if this.snowkats}}
-                <option value="" disabled selected>Select a group</option>
-                {{/if}}
-                {{#each ../userGroups}}
-                {{#if this.snowkats}}
-                <option value="{{this.id}}">{{this.groupName}}</option>
-                {{/if}}
-                {{/each}}
-              </select>
+              <option value="" disabled selected>Select a group</option>
               {{/if}}
-            {{/each}}
-          </div>
+              {{#each ../userGroups}}
+              {{#if this.snowkats}}
+              <option value="{{this.id}}">{{this.groupName}}</option>
+              {{/if}}
+              {{/each}}
+            </select>
+            {{/if}}
+          {{/each}}
         </div>
-        <div class="spacer">
-          <select form="schedule" name="year">
-            {{#each selectYear}}
-            <option value="{{this}}">{{this}}</option>
-            {{/each}}
-          </select>
-        </div>
-        <button class="btn-info btn-full" form="schedule"><i class="ti ti-calendar-plus"></i> Change Schedule Order</button>
       </div>
+      <div class="spacer">
+        <select form="schedule" name="year">
+          {{#each selectYear}}
+          <option value="{{this}}">{{this}}</option>
+          {{/each}}
+        </select>
+      </div>
+      <button class="btn-info btn-full" form="schedule"><i class="ti ti-calendar-plus"></i> Change Schedule Order</button>
     </div>
   </div>
   {{#each userGroups}}
