@@ -146,7 +146,7 @@ app.post("/register", (req, res) => {
 })
 
 app.get("/dashboard", (req, res) => {
-    if (req.session.auth == true && req.session.uid !== null) {
+    if (req.session.auth) {
         var increment = 0 // reset increment on page reload
         var entryCount = 0 // keep track of rows in schedule table
         let now = new Date()
@@ -194,9 +194,17 @@ app.get("/dashboard", (req, res) => {
                                 })
                                 
                                 if (webmaster.length !== 0) {
-                                    res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, year: yearList.sort(), setYear: now.getFullYear(), webmaster: webmaster[0].value })
+                                    if (req.session.admin == true) {
+                                        res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, year: yearList.sort(), setYear: now.getFullYear(), webmaster: webmaster[0].value, admin: true })
+                                    }else {
+                                        res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, year: yearList.sort(), setYear: now.getFullYear(), webmaster: webmaster[0].value })
+                                    }
                                 }else {
-                                    res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, year: yearList.sort(), setYear: now.getFullYear() })
+                                    if (req.session.admin == true) {
+                                        res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, year: yearList.sort(), setYear: now.getFullYear(), admin: true })
+                                    }else {
+                                        res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, year: yearList.sort(), setYear: now.getFullYear() })
+                                    }
                                 }
                             })
                         })
@@ -226,7 +234,7 @@ app.get("/dashboard", (req, res) => {
                                         return new hbs.SafeString(`<tr class="heavy"><th>Week</th><th>From</th><th>To</th><th>Condo Side</th><th>Scheduled - ` + filterYear + `</th><th>Actual - ` + filterYear + `</th><th>Notes</th></tr>`)
                                     }
                                 })
-                                                                
+
                                 if (webmaster.length !== 0) {
                                     res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, year: yearList, setYear: req.session.filter, webmaster: webmaster[0].value })
                                 }else {
@@ -246,7 +254,7 @@ app.get("/dashboard", (req, res) => {
 })
 
 app.get("/user/add", (req, res) => {
-    if (req.session.auth) {
+    if (req.session.auth && req.session.admin) {
         if (req.query.userID) {
             var stmt = "UPDATE `userdata` SET `activated`=1 WHERE `id`=?"
 
@@ -261,7 +269,7 @@ app.get("/user/add", (req, res) => {
 })
 
 app.get("/user/deny", (req ,res) => {
-    if (req.session.auth) {
+    if (req.session.auth && req.session.admin) {
         if (req.query.userID) {
             var stmt = "DELETE FROM `userdata` WHERE `id`=?"
 
@@ -274,7 +282,7 @@ app.get("/user/deny", (req ,res) => {
 })
 
 app.post("/user/edit", (req, res) => {
-    if (req.session.auth) {        
+    if (req.session.auth && req.session.admin) {        
         var stmt = "UPDATE `userdata` SET `firstName`=?, `lastName`=?, `address`=?, `address2`=?, `city`=?, `state`=?, `zipcode`=?, `phoneNumber`=?, `email`=?"
 
         con.query(stmt, [req.body.fname, req.body.lname, req.body.address, req.body.address2, req.body.city, req.body.state, req.body.zipcode, req.body.phone, req.body.email], (err, val) => {
@@ -286,7 +294,7 @@ app.post("/user/edit", (req, res) => {
 })
 
 app.get("/user/delete", (req, res) => {
-    if (req.session.auth) {
+    if (req.session.auth && req.session.admin) {
         if (req.query.userID) {
             var stmt = "DELETE FROM `userdata` WHERE `id`=?"
 
@@ -315,7 +323,7 @@ app.get("/logout", (req, res) => {
 /* DASHBOARD */
 
 app.get("/dashboard/users", (req, res) => {
-    if (req.session.auth == true) {
+    if (req.session.auth && req.session.admin) {
         var sb_inc = -1
         var sk_inc = -1
 
@@ -392,7 +400,7 @@ app.get("/dashboard/users", (req, res) => {
 /* SCHEDULE */
 
 app.post("/schedule/edit", (req, res) => {
-    if (req.session.auth && req.body.year) {
+    if (req.session.auth && req.session.admin && req.body.year) {
         var snowbirds = [] // arrays snowbirds and snowkats store the names of the input fields
         var snowkats = []
         var snowbirdValues = [] // arrays snowbirdValues and snowkatValues store the contents of aforementioned input fields
@@ -510,7 +518,7 @@ app.post("/schedule/edit", (req, res) => {
 })
 
 app.post("/schedule/edit/actual", (req, res) => { /* modify actual group for a schedule row */
-    if (req.session.auth == true && req.session.uid !== null && req.body.id && req.body.newActual && req.body.year) {
+    if (req.session.auth && req.body.id && req.body.newActual && req.body.year) {
          var stmt = "UPDATE `schedule` SET `actualGroup`=? WHERE `id`=?"
 
          con.query(stmt, [req.body.newActual, req.body.id])
@@ -522,7 +530,7 @@ app.post("/schedule/edit/actual", (req, res) => { /* modify actual group for a s
 })
 
 app.post("/schedule/edit/notes", (req, res) => { /* modify actual group for a schedule row */
-    if (req.session.auth == true && req.session.uid !== null && req.body.id && req.body.year) {
+    if (req.session.auth && req.body.id && req.body.year) {
          var stmt = "UPDATE `schedule` SET `notes`=? WHERE `id`=?"
 
          con.query(stmt, [req.body.notes, req.body.id])
@@ -534,7 +542,7 @@ app.post("/schedule/edit/notes", (req, res) => { /* modify actual group for a sc
 })
 
 app.post("/dashboard/filter", (req, res) => { /* handler for filter requests */
-    if (req.session.auth == true && req.session.uid !== null && req.body.yearSelect) { 
+    if (req.session.auth && req.body.yearSelect) { 
         req.session.filter = req.body.yearSelect
 
         res.redirect("/dashboard") /* redirect to the dashboard with new filter session variable (it will be destroyed when finished with) */
@@ -546,7 +554,7 @@ app.post("/dashboard/filter", (req, res) => { /* handler for filter requests */
 /* GROUP ACTIONS */
 
 app.post("/group/add", (req, res) => {
-    if (req.session.auth == true) {
+    if (req.session.auth && req.session.admin) {
         var stmt = "INSERT INTO `usergroups` (`groupName`, `snowkats`, `snowbirds`) VALUES (?, ?, ?)"
 
         con.query(stmt, [req.body.gname, req.body.snowkats, req.body.snowbirds])
@@ -558,7 +566,7 @@ app.post("/group/add", (req, res) => {
 })
 
 app.post("/group/edit", (req, res) => {
-    if (req.session.auth == true) {
+    if (req.session.auth && req.session.admin) {
         if (req.body.gname && req.body.snowbirds && req.body.snowkats) {
             var stmt = "UPDATE `usergroups` SET `groupName`=?, `snowbirds`=?, `snowkats`=? WHERE `groupName`=?"
 
@@ -574,7 +582,7 @@ app.post("/group/edit", (req, res) => {
 })
 
 app.get("/group/delete", (req, res) => {
-    if (req.session.auth == true) {
+    if (req.session.auth && req.session.admin) {
         var stmt = "DELETE FROM `usergroups` WHERE `id`=?"
 
         con.query(stmt, [req.query.groupID])
@@ -587,7 +595,7 @@ app.get("/group/delete", (req, res) => {
 /* SETTINGS */
 
 app.get("/schedule/delete", (req, res) => {
-    if (req.session.auth && req.query.year) {
+    if (req.session.auth && req.session.admin && req.query.year) {
         var stmt = "DELETE FROM `schedule` WHERE `year`=?"
 
         con.query(stmt, [req.query.year])
@@ -601,7 +609,7 @@ app.get("/schedule/delete", (req, res) => {
 })
 
 app.post("/settings/webmaster", (req, res) => {
-    if (req.session.auth && req.body.email) {
+    if (req.session.auth && req.session.admin && req.body.email) {
         var stmt = "SELECT `setting` FROM `settings` WHERE `setting`='webmaster'"
 
         con.query(stmt, (err, val) => {

@@ -12,9 +12,9 @@
   <nav>
     <ul>
       <li><a href="/dashboard">Home</a></li>
-      <li><a href="/dashboard/users">Admin</a></li>
+      {{#if admin}}<li><a href="/dashboard/users">Admin</a></li>{{/if}}
       <li class="secondary"><a href="/logout"><i class="ti ti-logout"></i></a></li>
-      <li class="secondary"><a href="#" onclick="settingsModal()"><i class="ti ti-settings"></i></a></li>
+      {{#if admin}}<li class="secondary"><a href="#" onclick="settingsModal()"><i class="ti ti-settings"></i></a></li>{{/if}}
     </ul>
   </nav>
   <div class="titlecard">
