@@ -226,11 +226,11 @@ app.get("/dashboard", (req, res) => {
                                         return new hbs.SafeString(`<tr class="heavy"><th>Week</th><th>From</th><th>To</th><th>Condo Side</th><th>Scheduled - ` + filterYear + `</th><th>Actual - ` + filterYear + `</th><th>Notes</th></tr>`)
                                     }
                                 })
-                                
+                                                                
                                 if (webmaster.length !== 0) {
-                                    res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, year: yearList.sort(), setYear: now.getFullYear(), webmaster: webmaster[0].value })
+                                    res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, year: yearList, setYear: req.session.filter, webmaster: webmaster[0].value })
                                 }else {
-                                    res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, year: yearList.sort(), setYear: now.getFullYear() })
+                                    res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, year: yearList, setYear: req.session.filter })
                                 }
 
                                 req.session.filter = null // kill filter variable
@@ -365,7 +365,7 @@ app.get("/dashboard/users", (req, res) => {
                                     yearList.unshift(scheduleYears[i].year) // move current year to the back if no default filter is selected
                                 }
                             }
-    
+
                             if (val.length == 0) {
                                 if (webmaster.length !== 0) {
                                     res.render("users", { userGroups: groupInfo, userInfo: userInfo, activated: userInfo[0]?.activated, selectYear: years, year: yearList.sort(), webmaster: webmaster[0].value })

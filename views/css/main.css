@@ -104,9 +104,10 @@ input[type="number"] {
 }
 
 .small { /* use for buttons */
-    width: auto !important;
+    width: 25px !important; /* just enough for room for 1 tabler icon */
     padding: 2px;
     height: 30px;
+    border: none !important;
 }
 
 input::-webkit-outer-spin-button,
@@ -148,8 +149,13 @@ label {
 }
 
 select {
-    width: 100%;
+    width: 40%;
     height: 30px;
+}
+
+.schedule-select {
+    width: 100%;
+    height: 25px;
 }
 
 .inline {

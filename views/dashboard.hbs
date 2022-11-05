@@ -20,16 +20,19 @@
   <div class="titlecard">
      <div class="card-inner">
       <h1>Welcome, {{firstName}}!</h1><br>
+      <div class="spacer">
+        <p>Use the dropdown below to view different schedules for different years. If a desired year is not listed, please contact an administrator.</p>
+      </div>
       <h4>Select year</h4>
       <form action="/dashboard/filter" method="post">
-        <div class="spacer">
+        <div class="spacer inline">
           <select name="yearSelect" autocomplete="off">
             {{#each year}}
             <option value="{{this}}">{{this}}</option>
             {{/each}}
           </select>
         </div>
-        <button class="btn btn-info btn-full">Select Year</button>
+        <button class="btn btn-info small"><i class="ti ti-filter"></i></button>
       </form>
     </div>
   </div>
