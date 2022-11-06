@@ -63,6 +63,11 @@ app.get("/register", (req, res) => {
     var stmt = "SELECT * FROM `usergroups` ORDER BY `groupName` ASC"
 
     con.query(stmt, (err, groups) => {
+        if (req.session.error) {
+            res.locals.error = req.session.error
+            req.session.error = null
+        }
+
         res.render("register", { userGroup: groups })
     })
 })
@@ -116,7 +121,8 @@ app.post("/register", (req, res) => {
             var stmt = "SELECT * FROM `usergroups` ORDER BY `groupName` ASC"
 
             con.query(stmt, (err, groups) => {
-                res.render("register", { error: "This email already exists", userGroups: groups }) // TODO: CHANGE ERROR MESSAGE TO BE SESSION VARIABLE BASED
+                req.session.error = "This email already exists"
+                res.redirect("/register")
             })
         }else {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
             var saltWork = 10
