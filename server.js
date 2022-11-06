@@ -163,6 +163,10 @@ app.get("/dashboard", (req, res) => {
                 var stmt = "SELECT `value` FROM `settings` WHERE `setting`='webmaster'"
 
                 con.query(stmt, (err, webmaster) => {
+                    if (req.session.admin) {
+                        res.locals.admin = true
+                    }
+
                     if (!req.session.filter) {
                         var stmt = "SELECT * FROM `schedule` WHERE `year`=? ORDER BY `startDate` ASC, `condoSide`"
     
@@ -190,20 +194,12 @@ app.get("/dashboard", (req, res) => {
                                         return new hbs.SafeString(`<tr class="heavy"><th>Week</th><th>From</th><th>To</th><th>Condo Side</th><th>Scheduled - ` + now.getFullYear() + `</th><th>Actual - ` + now.getFullYear() + `</th><th>Notes</th></tr>`)
                                     }
                                 })
-                                
+
                                 if (webmaster.length !== 0) {
-                                    if (req.session.admin == true) {
-                                        res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, year: yearList.sort(), setYear: now.getFullYear(), webmaster: webmaster[0].value, admin: true })
-                                    }else {
-                                        res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, year: yearList.sort(), setYear: now.getFullYear(), webmaster: webmaster[0].value })
-                                    }
-                                }else {
-                                    if (req.session.admin == true) {
-                                        res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, year: yearList.sort(), setYear: now.getFullYear(), admin: true })
-                                    }else {
-                                        res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, year: yearList.sort(), setYear: now.getFullYear() })
-                                    }
+                                    res.locals.webmaster = webmaster[0].value
                                 }
+                                
+                                res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, year: yearList.sort(), setYear: now.getFullYear() })
                             })
                         })
                     }else {
@@ -234,10 +230,10 @@ app.get("/dashboard", (req, res) => {
                                 })
 
                                 if (webmaster.length !== 0) {
-                                    res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, year: yearList, setYear: req.session.filter, webmaster: webmaster[0].value })
-                                }else {
-                                    res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, year: yearList, setYear: req.session.filter })
+                                    res.locals.webmaster = webmaster[0].value
                                 }
+
+                                res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, year: yearList, setYear: req.session.filter })
 
                                 req.session.filter = null // kill filter variable
                             })
