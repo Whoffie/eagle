@@ -14,7 +14,7 @@
       <li><a href="/dashboard">Home</a></li>
       {{#if admin}}<li><a href="/dashboard/users">Admin</a></li>{{/if}}
       <li class="secondary"><a href="/logout"><i class="ti ti-logout"></i></a></li>
-      {{#if admin}}<li class="secondary"><a href="#" onclick="settingsModal()"><i class="ti ti-settings"></i></a></li>{{/if}}
+      {{#if admin}}<li class="secondary"><a href="#" onclick="settingsModal(0)"><i class="ti ti-settings"></i></a></li>{{/if}}
     </ul>
   </nav>
   <div class="titlecard">
@@ -146,7 +146,7 @@
     <div class="inner" id="settings-inner">
       <div class="spacer">
         <div class="content">
-          <a href="#"><span class="close" onclick="settingsClose()"><i class="ti ti-square-x"></i></span></a>
+          <a href="#"><span class="close" onclick="settingsClose(0)"><i class="ti ti-square-x"></i></span></a>
           <div class="spacer">
             <h1>General Settings</h1>
             <h3 class="warning"><i class="ti ti-shield-check"></i> This area is accessible to administrators only</h3>

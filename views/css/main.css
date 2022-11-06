@@ -27,6 +27,12 @@ footer {
     text-align: center;
 }
 
+.mpsc {
+    margin: 0 auto;
+    padding: 70px 70px 70px 70px;
+    padding-top: 400px;
+}
+
 .heading {
     margin-bottom: 30px;
 }
@@ -126,7 +132,7 @@ input[type=number] {
     border-radius: 2px;
     padding-left: 2px;
     box-sizing: border-box;
-    width: 49.4% !important;
+    width: 49.7% !important;
     display: inline;
     margin-top: 5px;
 }
@@ -194,6 +200,10 @@ a {
 
 .danger {
     color: red;
+}
+
+.margin-top {
+    margin-top: 10px;
 }
 
 .msg {
@@ -448,10 +458,20 @@ nav ul li a {
         width: 90%;
         margin: 60px 60px 60px 60px;
     }
+
+    .mpsc {
+        padding: 100px !important;
+    }
 }
 
 @media screen and (max-width: 1445px) {
     .titlecard {
         width: 80%;
+    }
+}
+
+@media screen and (max-width: 1955px) {
+    .input-half {
+        width: 100% !important;
     }
 }

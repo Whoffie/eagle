@@ -14,11 +14,12 @@
       <li><a href="/dashboard">Home</a></li>
       <li><a href="/dashboard/users">Admin</a></li>
       <li class="secondary"><a href="/logout"><i class="ti ti-logout"></i></a></li>
-      <li class="secondary"><a href="#" onclick="settingsModal()"><i class="ti ti-settings"></i></a></li>
+      <li class="secondary"><a href="#" onclick="settingsModal(1)"><i class="ti ti-settings"></i></a></li>
     </ul>
   </nav>
   <div class="main-parent">
     <div class="main-child">
+      {{#if error}}<h3 class="danger margin-top">{{error}}</h3>{{/if}}
       <div class="left-container">
         <h2 class="spacer">Create New Group</h2>
         <form action="/group/add" method="post">
@@ -108,7 +109,7 @@
       </div>
     </div>
   </div>
-  <div class="main-parent" style="padding-top: 400px">
+  <div class="mpsc">
     <div class="main-child">
       <h2 class="spacer">Schedule Creation</h2>
         <p class="spacer">Choose the order of condo sides Snowkats and Snowbirds. Both will be compiled into a single schedule list. Changes submitted will be made immediately, so be cautious.</p>
@@ -193,6 +194,7 @@
               <label>Snowkats Shares</label>
               <input type="number" name="snowkats" placeholder="# of Snowkats shares" value="{{this.snowkats}}" min="0" required>
             </div>
+            <input type="hidden" name="gid" value="{{this.id}}">
             <button type="submit" class="btn-full btn-info"><i class="ti ti-edit"></i> Edit Group</button>
           </form>
         </div>
@@ -258,6 +260,15 @@
               <label>Zipcode <span class="danger">*</span></label><br>
               <input type="number" name="zipcode" placeholder="Zipcode" value="{{this.zipcode}}" min="0" required>
             </div>
+            <div class="spacer">
+              {{#ifEquals this.admin 0}}
+              <input type="checkbox" name="admin" id="admin" style="margin-left: 5px">
+              {{else}}
+              <input type="checkbox" name="admin" id="admin" style="margin-left: 5px" checked>
+              {{/ifEquals}}
+              <label for="admin" class="warning"><i class="ti ti-shield-check"></i> Administrator Rights </label>
+            </div>
+            <input type="hidden" name="uid" value="{{this.id}}">
             <button type="submit" class="btn-info btn-full"><i class="ti ti-edit"></i> Edit User</button>
           </form>
         </div>
@@ -269,7 +280,7 @@
     <div class="inner" id="settings-inner">
       <div class="spacer">
         <div class="content">
-          <a href="#"><span class="close" onclick="settingsClose()"><i class="ti ti-square-x"></i></span></a>
+          <a href="#"><span class="close" onclick="settingsClose(1)"><i class="ti ti-square-x"></i></span></a>
           <div class="spacer">
             <h1>General Settings</h1>
             <h3 class="warning"><i class="ti ti-shield-check"></i> This area is accessible to administrators only</h3>

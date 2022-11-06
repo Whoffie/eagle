@@ -6,8 +6,6 @@ const session = require("express-session")
 const sqlStore = require("express-mysql-session")(session)
 const bcrypt = require("bcrypt")
 const port = 8080
-const { resolve } = require("path");
-const e = require("express")
 
 con = sql.createConnection({ // credentials for connection to database
     host: "localhost",
@@ -127,14 +125,14 @@ app.post("/register", (req, res) => {
 
                 con.query(stmt, [req.body.group], (err, groupName) => {
                     if (req.body.address2 !== null) {
-                        var stmt = "INSERT INTO `userdata` (`firstName`, `lastName`, `address`, `address2`, `city`, `state`, `zipcode`, `phoneNumber`, `email`, `password`, `userGroup`, `groupName`, `activated`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-                        con.query(stmt, [req.body.fName, req.body.lName, req.body.address, req.body.address2, req.body.city, req.body.state, req.body.zipcode, req.body.phone, req.body.email, hash, req.body.group, groupName[0].groupName, 0])
+                        var stmt = "INSERT INTO `userdata` (`firstName`, `lastName`, `address`, `address2`, `city`, `state`, `zipcode`, `phoneNumber`, `email`, `password`, `userGroup`, `groupName`, `activated`, `admin`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                        con.query(stmt, [req.body.fName, req.body.lName, req.body.address, req.body.address2, req.body.city, req.body.state, req.body.zipcode, req.body.phone, req.body.email, hash, req.body.group, groupName[0].groupName, 0, 0])
                         
                         req.session.success = "User has successfully been created!"
                         res.redirect("/")
                     }else {
-                        var stmt = "INSERT INTO `userdata` (`firstName`, `lastName`, `address`, `city`, `state`, `zipcode`, `phoneNumber`, `email`, `password`, `userGroup`, `groupName`, `activated`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-                        con.query(stmt, [req.body.fName, req.body.lName, req.body.address, req.body.city, req.body.state, req.body.zipcode, req.body.phone, req.body.email, hash, req.body.group, groupName[0].groupName, 0])
+                        var stmt = "INSERT INTO `userdata` (`firstName`, `lastName`, `address`, `city`, `state`, `zipcode`, `phoneNumber`, `email`, `password`, `userGroup`, `groupName`, `activated`, `admin`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                        con.query(stmt, [req.body.fName, req.body.lName, req.body.address, req.body.city, req.body.state, req.body.zipcode, req.body.phone, req.body.email, hash, req.body.group, groupName[0].groupName, 0, 0])
                         
                         req.session.success = "User has successfully been created!"
                         res.redirect("/")           
@@ -282,11 +280,17 @@ app.get("/user/deny", (req ,res) => {
 })
 
 app.post("/user/edit", (req, res) => {
-    if (req.session.auth && req.session.admin) {        
-        var stmt = "UPDATE `userdata` SET `firstName`=?, `lastName`=?, `address`=?, `address2`=?, `city`=?, `state`=?, `zipcode`=?, `phoneNumber`=?, `email`=?"
+    if (req.session.auth && req.session.admin && req.body.uid) {
+        if (req.body.admin == "on") {
+            var admin = 1
+        }else {
+            var admin = 0
+        }
+        
+        var stmt = "UPDATE `userdata` SET `firstName`=?, `lastName`=?, `address`=?, `address2`=?, `city`=?, `state`=?, `zipcode`=?, `phoneNumber`=?, `email`=?, `admin`=? WHERE `id`=?"
 
-        con.query(stmt, [req.body.fname, req.body.lname, req.body.address, req.body.address2, req.body.city, req.body.state, req.body.zipcode, req.body.phone, req.body.email], (err, val) => {
-            res.redirect("/dashboard/users")
+        con.query(stmt, [req.body.fname, req.body.lname, req.body.address, req.body.address2, req.body.city, req.body.state, req.body.zipcode, req.body.phone, req.body.email, admin, req.body.uid], (err, val) => {
+            res.redirect("/dashboard/users?modal=uedit&uid=" + req.body.uid)
         })
     }else {
         res.redirect("/")
@@ -294,12 +298,17 @@ app.post("/user/edit", (req, res) => {
 })
 
 app.get("/user/delete", (req, res) => {
-    if (req.session.auth && req.session.admin) {
+    if (req.session.auth && req.session.admin && req.session.uid && req.query.userID) {
         if (req.query.userID) {
-            var stmt = "DELETE FROM `userdata` WHERE `id`=?"
+            if (req.session.uid !== parseInt(req.query.userID)) { /* compare action uid vs active one */
+                var stmt = "DELETE FROM `userdata` WHERE `id`=?"
+                con.query(stmt, [req.query.userID])
 
-            con.query(stmt, [req.query.userID])
-            res.redirect("/dashboard/users")
+                res.redirect("/dashboard/users")
+            }else {
+                req.session.error = "Cannot delete: You are currently logged in as this user"
+                res.redirect("/dashboard/users")
+            }
         }else {
             res.redirect("/dashboard/users")
         }
@@ -374,19 +383,24 @@ app.get("/dashboard/users", (req, res) => {
                                 }
                             }
 
-                            if (val.length == 0) {
-                                if (webmaster.length !== 0) {
-                                    res.render("users", { userGroups: groupInfo, userInfo: userInfo, activated: userInfo[0]?.activated, selectYear: years, year: yearList.sort(), webmaster: webmaster[0].value })
-                                }else {
-                                    res.render("users", { userGroups: groupInfo, userInfo: userInfo, activated: userInfo[0]?.activated, selectYear: years, year: yearList.sort() })
-                                }
-                            }else {
-                                if (webmaster.length !== 0) {
-                                    res.render("users", { userGroups: groupInfo, userInfo: userInfo, activated: userInfo[0]?.activated, selectYear: years, year: yearList.sort(), activatedUserList: true, webmaster: webmaster[0].value })
-                                }else {
-                                    res.render("users", { userGroups: groupInfo, userInfo: userInfo, activated: userInfo[0]?.activated, selectYear: years, year: yearList.sort(), activatedUserList: true })
-                                }
+                            if (req.session.error) {
+                                res.locals.error = req.session.error
+                                req.session.error = null // clear error message
                             }
+
+                            if (webmaster.length !== 0) {
+                                res.locals.webmaster = webmaster[0].value
+                            }
+
+                            if (val.length !== 0) {
+                                res.locals.activatedUserList = true
+                            }
+
+                            if (req.session.admin) { /* admin check */
+                                res.locals.admin = true
+                            }
+
+                            res.render("users", { userGroups: groupInfo, userInfo: userInfo, activated: userInfo[0]?.activated, selectYear: years, year: yearList.sort() })
                         })
                     })
                 })
@@ -567,11 +581,11 @@ app.post("/group/add", (req, res) => {
 
 app.post("/group/edit", (req, res) => {
     if (req.session.auth && req.session.admin) {
-        if (req.body.gname && req.body.snowbirds && req.body.snowkats) {
-            var stmt = "UPDATE `usergroups` SET `groupName`=?, `snowbirds`=?, `snowkats`=? WHERE `groupName`=?"
+        if (req.body.gname && req.body.snowbirds && req.body.snowkats && req.body.gid) {
+            var stmt = "UPDATE `usergroups` SET `groupName`=?, `snowbirds`=?, `snowkats`=? WHERE `id`=?"
 
-            con.query(stmt, [req.body.gname, req.body.snowbirds, req.body.snowkats, req.body.gname], (err) => {
-                res.redirect("/dashboard/users")
+            con.query(stmt, [req.body.gname, req.body.snowbirds, req.body.snowkats, req.body.gid], (err) => {
+                res.redirect("/dashboard/users?modal=gedit&gid=" + req.body.gid)
             })
         }else {
             res.redirect("/dashboard/users")
