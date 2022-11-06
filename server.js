@@ -50,12 +50,20 @@ app.get("/", (req, res) => {
     if (req.session.auth == true && req.session.uid !== null) {
         res.redirect("/dashboard")
     }else {
-        if (!req.session.success) {
-            res.render("login")
-        }else {
-            res.render("login", { success: req.session.success })
-            req.session.success = null
-        }
+        var stmt = "SELECT `value` FROM `settings` WHERE `setting`='webmaster'"
+
+        con.query(stmt, (err, webmaster) => {
+            if (webmaster.length !== 0) {
+                res.locals.webmaster = webmaster[0].value
+            }
+
+            if (!req.session.success) {
+                res.render("login")
+            }else {
+                res.render("login", { success: req.session.success })
+                req.session.success = null
+            }
+        })
     }
 })
 
@@ -68,7 +76,15 @@ app.get("/register", (req, res) => {
             req.session.error = null
         }
 
-        res.render("register", { userGroup: groups })
+        var stmt = "SELECT `value` FROM `settings` WHERE `setting`='webmaster'"
+
+        con.query(stmt, (err, webmaster) => {
+            if (webmaster.length !== 0) {
+                res.locals.webmaster = webmaster[0].value
+            }
+
+            res.render("register", { userGroup: groups })
+        })
     })
 })
 
