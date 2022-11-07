@@ -294,6 +294,11 @@ button {
     overflow-x: auto;
 }
 
+.ut-wrapper {
+    overflow-x: auto;
+    max-height: 314px;
+}
+
 table {
     background-color: lightgray;
     width: 100%;
