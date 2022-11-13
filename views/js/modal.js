@@ -20,8 +20,8 @@ function groupDelete(gid) {
 }
 
 function gdelClose(gid) {
-    $(".inner-edit-" + gid).hide()
-    $(".modal-edit-" + gid).hide()
+    $(".inner-" + gid).hide()
+    $(".modal-" + gid).hide()
 }
 
 function groupEdit(gid) {
