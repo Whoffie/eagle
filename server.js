@@ -549,6 +549,20 @@ app.post("/schedule/edit", (req, res) => {
     }
 })
 
+app.get("/dashboard/partnerdir", (req, res) => {
+    if (req.session.auth) {
+        if (req.session.admin) {
+            res.locals.admin = true
+        }
+        
+        var stmt = "SELECT `firstName`, `lastName`, `email`, `groupName` FROM `userdata`"
+        
+        con.query(stmt, (err, users) => {
+            res.render("partnerdir", { user: users })
+        })
+    }
+})
+
 app.post("/schedule/edit/actual", (req, res) => { /* modify actual group for a schedule row */
     if (req.session.auth && req.body.id && req.body.newActual && req.body.year) {
          var stmt = "UPDATE `schedule` SET `actualGroup`=? WHERE `id`=?"
