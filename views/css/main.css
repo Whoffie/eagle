@@ -376,6 +376,10 @@ nav ul li {
     float: left;
 }
 
+nav ul li i {
+    color: white;
+}
+
 nav ul li a {
     color: white;
     text-decoration: none;

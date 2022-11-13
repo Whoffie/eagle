@@ -11,9 +11,9 @@
 <body>
   <nav>
     <ul>
-      <li><a href="/dashboard">Home</a></li>
-      <li><a href="/dashboard/partnerdir">Partner Directory</a></li>
-      {{#if admin}}<li><a href="/dashboard/users">Admin</a></li>{{/if}}
+      <li><a href="/dashboard"><i class="ti ti-home"></i>  Home</a></li>
+      <li><a href="/dashboard/partnerdir"><i class="ti ti-folders"></i> Partner Directory</a></li>
+      {{#if admin}}<li><a href="/dashboard/users"><i class="ti ti-shield-lock"></i>  Admin</a></li>{{/if}}
       <li class="secondary"><a href="/logout"><i class="ti ti-logout"></i></a></li>
       {{#if admin}}<li class="secondary"><a href="#" onclick="settingsModal(0)"><i class="ti ti-settings"></i></a></li>{{/if}}
     </ul>
