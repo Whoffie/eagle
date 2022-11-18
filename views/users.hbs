@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Users and Groups</title>
+  <title>Partner Management</title>
   <link rel="stylesheet" href="/css/main.css" type="text/css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/iconfont/tabler-icons.min.css">
 </head>
@@ -22,15 +22,15 @@
     <div class="main-child">
       {{#if error}}<h3 class="danger margin-top">{{error}}</h3>{{/if}}
       <div class="left-container">
-        <h2 class="spacer">Create New Group</h2>
+        <h2 class="spacer">Create New Partner Unit</h2>
         <form action="/group/add" method="post">
           <div class="field-wrapper">
-            <input type="text" placeholder="Group Name" name="gname" maxlength="100" required>
+            <input type="text" placeholder="Partner Unit Name" name="gname" maxlength="100" required>
             <input type="number" name="snowbirds" class="input-half" placeholder="# of Snowbirds shares" min="0" required>
             <input type="number" name="snowkats" class="input-half" placeholder="# of Snowkats shares" min="0" required>
           </div>
           <div class="field-wrapper">
-            <input type="submit" value="Add Group">
+            <input type="submit" value="Add Partner Unit">
           </div>
         </form>
         <div class="t-wrapper-group">
@@ -55,14 +55,14 @@
         </div>
       </div>
       <div class="right-container">
-        <h2 class="spacer">Users</h2>
+        <h2 class="spacer">Partners</h2>
         <div class="ut-wrapper">
           <table>
             <tr class="heavy">
               <th>First Name</th>
               <th>Last Name</th>
               <th>Phone Number</th>
-              <th>Group</th>
+              <th>Partner Unit</th>
               <th>Edit</th>
               <th>Delete</th>
             </tr>
@@ -81,14 +81,14 @@
           </table>
         </div>
         {{#if activatedUserList}}
-        <h2 class="spacer newusers">Incoming Users</h2>
+        <h2 class="spacer newusers">Incoming Partners</h2>
         <div class="t-wrapper">
           <table class="info">
             <tr class="heavy">
               <th>First Name</th>
               <th>Last Name</th>
               <th>Phone Number</th>
-              <th>Group</th>
+              <th>Partner Unit</th>
               <th>Accept</th>
               <th>Deny</th>
             </tr>
@@ -121,7 +121,7 @@
             {{#if this.snowbirds}}
             <select name="snowbirds{{sb_increment}}" class="schedule-select">
               {{#if this.snowbirds}}
-              <option value="" disabled selected>Select a group</option>
+              <option value="" disabled selected>Select a Partner Unit</option>
               {{/if}}
               {{#each ../userGroups}}
               {{#if this.snowbirds}}
@@ -139,7 +139,7 @@
             {{#if this.snowkats}}
             <select name="snowkats{{sk_increment}}" form="schedule" class="schedule-select">
               {{#if this.snowkats}}
-              <option value="" disabled selected>Select a group</option>
+              <option value="" disabled selected>Select a Partner Unit</option>
               {{/if}}
               {{#each ../userGroups}}
               {{#if this.snowkats}}
@@ -167,8 +167,8 @@
       <div class="spacer">
         <div class="content">
           <a href="#"><span class="close" onclick="gdelClose({{this.id}})"><i class="ti ti-square-x"></i></span></a>
-          <h1>Delete Group "{{this.groupName}}"?</h1><br>
-          <h3>Deleting groups may severely impact current the current schedule. The "actual" table schedules will <strong>not</strong> be changed in order to preserve the actual schedule.</h3>
+          <h1>Delete Partner Unit "{{this.groupName}}"?</h1><br>
+          <h3>Deleting Partner Units may severely impact current the current schedule. The "actual" table schedules will <strong>not</strong> be changed in order to preserve the actual schedule.</h3>
         </div>
       </div>
       <a href="/group/delete/?groupID={{this.id}}"><button class="btn-danger"><i class="ti ti-trash"></i> Delete</button></a>
@@ -181,11 +181,11 @@
       <div class="spacer">
         <div class="content">
           <a href="#"><span class="close" onclick="geditClose({{this.id}})"><i class="ti ti-square-x"></i></span></a>
-          <h1>Editing Group "{{this.groupName}}"</h1><br>
+          <h1>Editing Partner Unit "{{this.groupName}}"</h1><br>
           <form action="/group/edit" method="post">
             <div class="spacer">
-              <label>Group Name</label>
-              <input type="text" placeholder="Group Name" name="gname" value="{{this.groupName}}" maxlength="100" required>
+              <label>Partner Unit Name</label>
+              <input type="text" placeholder="Partner Partner Unit Name" name="gname" value="{{this.groupName}}" maxlength="100" required>
             </div>
             <div class="spacer">
               <label>Snowbirds Shares</label>
@@ -196,7 +196,7 @@
               <input type="number" name="snowkats" placeholder="# of Snowkats shares" value="{{this.snowkats}}" min="0" required>
             </div>
             <input type="hidden" name="gid" value="{{this.id}}">
-            <button type="submit" class="btn-full btn-info"><i class="ti ti-edit"></i> Edit Group</button>
+            <button type="submit" class="btn-full btn-info"><i class="ti ti-edit"></i> Edit Partner Unit</button>
           </form>
         </div>
       </div>
@@ -210,10 +210,10 @@
         <div class="content">
           <a href="#"><span class="close" onclick="udelClose({{this.id}})"><i class="ti ti-square-x"></i></span></a>
           <h1>Remove user {{this.firstName}} {{this.lastName}}?</h1><br>
-          <h3>{{this.firstName}} {{this.lastName}} will be fully removed from this site. This includes this user's attachment to their current group ({{this.groupName}})</h3>
+          <h3>{{this.firstName}} {{this.lastName}} will be fully removed from this site. This includes this partner's attachment to their current partner unit ({{this.groupName}})</h3>
         </div>
       </div>
-      <a href="/user/delete/?userID={{this.id}}"><button class="btn-danger"><i class="ti ti-trash"></i> Delete User</button></a>
+      <a href="/user/delete/?userID={{this.id}}"><button class="btn-danger"><i class="ti ti-trash"></i> Delete Partner</button></a>
     </div>
   </div>
   {{/each}}
@@ -223,7 +223,7 @@
       <div class="spacer">
         <div class="content">
           <a href="#"><span class="close" onclick="ueditClose({{this.id}})"><i class="ti ti-square-x"></i></span></a>
-          <h1>Editing User "{{this.firstName}} {{this.lastName}}"</h1><br>
+          <h1>Editing Partner "{{this.firstName}} {{this.lastName}}"</h1><br>
           <form action="/user/edit" method="post">
             <div class="spacer">
               <label>Email <span class="danger">*</span></label><br>
@@ -270,7 +270,7 @@
               <label for="admin" class="warning"><i class="ti ti-shield-check"></i> Administrator Rights </label>
             </div>
             <input type="hidden" name="uid" value="{{this.id}}">
-            <button type="submit" class="btn-info btn-full"><i class="ti ti-edit"></i> Edit User</button>
+            <button type="submit" class="btn-info btn-full"><i class="ti ti-edit"></i> Edit Partner</button>
           </form>
         </div>
       </div>
