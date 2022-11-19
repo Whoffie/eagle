@@ -157,6 +157,7 @@ label {
 select {
     width: 40%;
     height: 30px;
+    padding-left: 4px;
 }
 
 .schedule-select {
