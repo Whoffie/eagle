@@ -106,6 +106,7 @@ app.post("/login", (req, res) => {
                             if (userAttributes[0].activated == 1) {
                                 req.session.auth = true
                                 req.session.uid = val[0].id
+                                req.session.password = req.body.password // for changing passwords later on
                                 
                                 if (userAttributes[0].admin) {
                                     req.session.admin = true
@@ -315,6 +316,31 @@ app.post("/user/edit", (req, res) => {
     }
 })
 
+app.post("/user/selfedit", (req, res) => {
+    if (req.session.auth && req.session.uid) {
+        if (req.body.email && req.body.password && req.body.address && req.body.city && req.body.state && req.body.zipcode && req.body.phone && req.body.email && req.body.group) { /* make sure these aren't empty */
+            var stmt = "SELECT `groupname` FROM `usergroups` WHERE `id`=?"
+
+            con.query(stmt, [req.body.group], (err, groupName) => {
+                let saltWork = 10
+
+                bcrypt.hash(req.body.password, saltWork, (err, hash) => {
+                    var stmt = "UPDATE `userdata` SET `firstName`=?, `lastName`=?, `address`=?, `address2`=?, `city`=?, `state`=?, `zipcode`=?, `phoneNumber`=?, `email`=?, `password`=?, `userGroup`=?, `groupName`=? WHERE `id`=?"
+
+                    con.query(stmt, [req.body.fName, req.body.lName, req.body.address, req.body.address2, req.body.city, req.body.state, req.body.zipcode, req.body.phone, req.body.email, hash, req.body.group, groupName[0].groupname, req.session.uid])
+                    req.session.password = req.body.password
+                    
+                    res.redirect("/dashboard/selfedit")
+                })
+            })
+        }else {
+            req.session.error = "One or more required fields are not sufficiently filled out"
+
+            res.redirect("/dashboard/selfedit")
+        }
+    }
+})
+
 app.get("/user/delete", (req, res) => {
     if (req.session.auth && req.session.admin && req.session.uid && req.query.userID) {
         if (req.query.userID) {
@@ -330,6 +356,31 @@ app.get("/user/delete", (req, res) => {
         }else {
             res.redirect("/dashboard/users")
         }
+    }else {
+        res.redirect("/")
+    }
+})
+
+app.get("/dashboard/selfedit", (req, res) => {
+    if (req.session.auth && req.session.uid && req.session.password) {
+        if (req.session.admin) {
+            res.locals.admin = true
+        }
+
+        if (req.session.error) {
+            res.locals.error = req.session.error
+            req.session.error = null
+        }
+
+        var stmt = "SELECT * FROM `userdata` WHERE `id`=?"
+
+        con.query(stmt, [req.session.uid], (err, userdata) => {
+            var stmt = "SELECT `id`, `groupname` FROM `usergroups`"
+
+            con.query(stmt, (err, groupdata) => {
+                res.render("selfedit", { firstname: userdata[0].firstName, lastname: userdata[0].lastName, address: userdata[0].address, address2: userdata[0].address2, city: userdata[0].city, state: userdata[0].state, zipcode: userdata[0].zipcode, phone: userdata[0].phoneNumber, email: userdata[0].email, password: req.session.password, groupid: userdata[0].userGroup, userGroups: groupdata })
+            })
+        })
     }else {
         res.redirect("/")
     }

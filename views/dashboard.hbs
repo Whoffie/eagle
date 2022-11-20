@@ -20,7 +20,12 @@
   </nav>
   <div class="titlecard">
      <div class="card-inner">
-      <h1>Welcome, {{firstName}}!</h1><br>
+      <div class="spacer">
+        <h1>Welcome, {{firstName}}!</h1>
+      </div>
+      <div class="spacer">
+        <h3><a class="nunderline" href="/dashboard/partnerdir"><i class="ti ti-folders"></i> Partner Directory</a> | <a class="nunderline" href="/dashboard/selfedit"><i class="ti ti-user"></i> Modify Account Info</a> | {{#if admin}}<a class="nunderline" href="/dashboard/users"><i class="ti ti-shield-lock"></i> Admin |</a>{{/if}} <a class="nunderline" href="/logout"><i class="ti ti-logout"></i> Logout</a></h3>
+      </div>
       <div class="spacer">
         <p>Use the dropdown below to view different schedules for different years. If a desired year is not listed, please contact an administrator.</p>
       </div>

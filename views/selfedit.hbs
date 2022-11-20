@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello!</title>
+    <link rel="stylesheet" href="/css/main.css" type="text/css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/iconfont/tabler-icons.min.css">
+  </head>
+  <body>
+    <nav>
+      <ul>
+        <li><a href="/dashboard"><i class="ti ti-home"></i>  Home</a></li>
+        <li><a href="/dashboard/partnerdir"><i class="ti ti-folders"></i> Partner Directory</a></li>
+        {{#if admin}}<li><a href="/dashboard/users"><i class="ti ti-shield-lock"></i>  Admin</a></li>{{/if}}
+        <li class="secondary"><a href="/logout"><i class="ti ti-logout"></i></a></li>
+        {{#if admin}}<li class="secondary"><a href="#" onclick="settingsModal(0)"><i class="ti ti-settings"></i></a></li>{{/if}}
+      </ul>
+    </nav>
+    <div class="main-parent">
+      <div class="main-child">
+        <img src="/img/vailcondoassociates.jpg" alt="Vail Condo Associates"><br>
+        <div class="form-container">
+          <form action="/user/selfedit" method="post">
+            <label class="formLabel">Name <span class="danger">*</span></label><br>
+            <div class="field-wrapper">
+              <input type="text" name="fName" class="halve" placeholder="First name" value="{{firstname}}" autocomplete="off" required>
+              <input type="text" name="lName" class="halve" placeholder="Last name" value="{{lastname}}" autocomplete="off" required>
+            </div>
+            <label class="formLabel">Email <span class="danger">*</span></label>
+            <div class="field-wrapper">
+              <input type="email" name="email" value="{{email}}" autocomplete="off" required>
+            </div>
+            <label class="formLabel">Password <span class="danger">*</span></label>
+            <div class="field-wrapper">
+              <input type="password" name="password" value="{{password}}" autocomplete="off" required>
+            </div>
+            <label class="formLabel">Address <span class="danger">*</span></label>
+            <div class="field-wrapper">
+              <input type="text" name="address" value="{{address}}" autocomplete="off" required>
+            </div>
+            <label class="formLabel">Address 2</label>
+            <div class="field-wrapper">
+              <input type="text" name="address2" value="{{address2}}" autocomplete="off">
+            </div>
+            <label class="formLabel inline">Location <span class="danger">*</span></label><br>
+            <div class="field-wrapper">
+              <input type="text" name="city" class="third" placeholder="City" value="{{city}}" autocomplete="off" required>
+              <input type="text" name="state" class="third" placeholder="State" value="{{state}}" autocomplete="off" required>
+              <input type="number" name="zipcode" class="third" placeholder="Zipcode" value="{{zipcode}}" autocomplete="off" required>
+            </div>
+            <label class="formLabel">Phone # <span class="danger">*</span></label>
+            <div class="field-wrapper">
+              <input type="number" name="phone" value="{{phone}}" autocomplete="off" required>
+            </div>
+            <label class="formLabel">Group Name <span class="danger">*</span></label>
+            <div class="field-wrapper">
+              <select name="group" style="width: 100%">
+                {{#each userGroups}}
+                {{#ifEquals this.id ../groupid}}
+                <option value="{{this.id}}" selected>{{this.groupname}}</option>
+                {{else}}
+                <option value="{{this.id}}">{{this.groupname}}</option>
+                {{/ifEquals}}
+                {{/each}}
+              </select>
+            </div>
+            <button class="btn-info btn-full" type="submit"><i class="ti ti-edit"></i> Update Account Info</button>
+          </form>
+        </div>
+        <p><a href="/"><i class="ti ti-arrow-left"></i> Return to dashboard</a></p>
+        <p class="danger">{{error}}</p>
+      </div>
+    </div>
+  </body>
+</html>
