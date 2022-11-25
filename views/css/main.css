@@ -27,6 +27,16 @@ footer {
     text-align: center;
 }
 
+.mp-notes {
+    padding-top: 300px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.mpc-notes {
+    text-align: center;
+}
+
 .mpsc {
     margin: 0 auto;
     padding: 70px 70px 70px 70px;
@@ -240,6 +250,11 @@ button {
     border-bottom: #116ebf 2px solid;
 }
 
+.btn-white {
+    background-color: white;
+    color: #555555;
+}
+
 .titlecard {
     width: 50%;
     background-color: lightgray;
@@ -248,8 +263,32 @@ button {
     border: #4c4d4c 1px solid;
 }
 
+.tc-notes {
+    width: 50%;
+    background-color: lightgray;
+    border-radius: 5px;
+    margin: 80px 40px 40px 40px;
+    border: #4c4d4c 1px solid;
+    padding-bottom: 0px;
+    margin-bottom: 0px;
+    float: left;
+    display: inline;
+}
+
 .card-inner {
     padding: 30px 10px 30px 30px;
+}
+
+.tc-inverse {
+    width: 45%;
+    display: inline;
+    float: right;
+    padding-top: 40px;
+}
+
+.tci-inner {
+    margin-top: 30px;
+    margin-right: 30px;
 }
 
 .left-container {
@@ -354,6 +393,7 @@ nav {
     position: fixed;
     width: 100%;
     top: 0;
+    z-index: 1;
 }
 
 nav ul {
@@ -442,6 +482,80 @@ nav ul li a {
     text-decoration: none;
 }
 
+pre {
+    white-space: pre-wrap;
+}
+
+.note {
+    background-color: #0d4575;
+    color: white;
+    height: auto;
+    width: 100%;
+    box-shadow: 5px 5px 5px black;
+    position: relative;
+    border-radius: 5px;
+}
+
+.note a {
+    color: white;
+}
+
+.note-inner {
+    padding: 10px 10px 10px 10px;
+    display: block;
+    word-wrap: break-word;
+}
+
+.note-heading {
+    text-align: center;
+}
+
+.note-content {
+    padding: 5px 10px 10px 10px;
+    display: none;
+}
+
+#show-less {
+    display: none;
+}
+
+.note-background {
+    background-color: #000000b9;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    z-index: 1;
+    display: none;
+    overflow-y: auto;
+    position: absolute;
+}
+
+.absolute-wrapper {
+    display: inline-block;
+    width: 350px;
+    margin: 50px 20px 20px 40px;
+}
+
+.note-selected {
+    width: 600px !important; /* so a user can reselect the same dropdown without jQuery freaking out */
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    margin: 0;
+}
+
+.note-option {
+    display: none;
+}
+
+.note-alt-content {
+    display: none;
+}
+
 @media screen and (max-width: 946px) {
     .form-container {
         width: 378px;
@@ -475,6 +589,29 @@ nav ul li a {
 
     .mpsc {
         padding: 100px !important;
+    }
+}
+
+@media screen and (max-width: 1670px) {
+    .tc-notes {
+        width: 90% !important;
+        display: block !important;
+        float: none !important;
+    }
+
+    .tc-inverse {
+        width: 90% !important;
+        display: block !important;
+        float: none !important;
+        margin-left: 40px;
+    }
+
+    .tci-inner {
+        margin: 0 !important;
+    }
+
+    .mp-notes {
+        padding-top: 100px !important; 
     }
 }
 

@@ -614,6 +614,25 @@ app.get("/dashboard/partnerdir", (req, res) => {
     }
 })
 
+app.get("/dashboard/notes", (req, res) => {
+    if (req.session.auth) {
+        if (req.session.admin) {
+            res.locals.admin = true
+        }
+
+        var stmt = "SELECT * FROM `notes` ORDER BY `subject` ASC"
+
+        con.query(stmt, (err, notes) => {
+            var stmt = "SELECT `firstName` FROM `userdata` WHERE `id`=?"
+            con.query(stmt, [req.session.uid], (err, fname) => {
+                res.render("notes", { note: notes, firstName: fname[0].firstName })
+            })
+        })
+    }else {
+        res.redirect("/")
+    }
+})
+
 app.post("/schedule/edit/actual", (req, res) => { /* modify actual group for a schedule row */
     if (req.session.auth && req.body.id && req.body.newActual && req.body.year) {
          var stmt = "UPDATE `schedule` SET `actualGroup`=? WHERE `id`=?"
@@ -726,6 +745,73 @@ app.post("/settings/webmaster", (req, res) => {
                 res.redirect("/dashboard/users?modal=settings")
             }
         })
+    }else {
+        res.redirect("/")
+    }
+})
+
+app.post("/note/new", (req, res) => {
+    if (req.session.auth) {
+        if (req.body.subject && req.body.content) {
+            var stmt = "SELECT `firstName` FROM `userdata` WHERE `id`=?"
+
+            con.query(stmt, [req.session.uid], (err, name) => {
+                let pubdate = new Date()
+
+                let dd = String(pubdate.getDate()).padStart(2, '0')
+                let mm = String(pubdate.getMonth() + 1).padStart(2, '0')
+                let yyyy = pubdate.getFullYear()
+
+                var stmt = "INSERT INTO `notes` (`subject`, `content`, `author`, `lastModified`) VALUES (?, ?, ?, ?)"
+
+                con.query(stmt, [req.body.subject, req.body.content, name[0].firstName, mm + "/" + dd + "/" + yyyy])
+
+                res.redirect("/dashboard/notes")
+            })
+        }else {
+            res.redirect("/dashboard/notes")
+        }
+    }else {
+        res.redirect("/")
+    }
+})
+
+app.get("/note/delete", (req, res) => {
+    if (req.session.auth) {
+        if (req.query.nid) {
+            var stmt = "DELETE FROM `notes` WHERE `id`=?"
+
+            con.query(stmt, [req.query.nid])
+            res.redirect("/dashboard/notes")
+        }else {
+            res.redirect("/dashboard/notes")
+        }
+    }else {
+        res.redirect("/")
+    }
+})
+
+app.post("/note/edit", (req, res) => {
+    if (req.session.auth) {
+        if (req.body.subject && req.body.content && req.body.nid) {
+            var stmt = "SELECT `firstName` FROM `userdata` WHERE `id`=?"
+            
+            con.query(stmt, [req.session.uid], (err, fname) => {
+                let editdate = new Date()
+
+                let dd = String(editdate.getDate()).padStart(2, '0')
+                let mm = String(editdate.getMonth() + 1).padStart(2, '0')
+                let yyyy = editdate.getFullYear()
+
+                var stmt = "UPDATE `notes` SET `subject`=?, `content`=?, `author`=?, `lastModified`=? WHERE `id`=?"
+
+                con.query(stmt, [req.body.subject, req.body.content, fname[0].firstName, mm + "/" + dd + "/" + yyyy, req.body.nid])
+
+                res.redirect("/dashboard/notes")
+            })
+        }else {
+            res.redirect("/dashboard/notes")
+        }
     }else {
         res.redirect("/")
     }

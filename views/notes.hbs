@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Condo Notes</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/iconfont/tabler-icons.min.css">
+</head>
+<body>
+  <nav>
+    <ul>
+      <li><a href="/dashboard"><i class="ti ti-home"></i>  Home</a></li>
+      <li><a href="/dashboard/partnerdir"><i class="ti ti-folders"></i> Partner Directory</a></li>
+      {{#if admin}}<li><a href="/dashboard/users"><i class="ti ti-shield-lock"></i>  Admin</a></li>{{/if}}
+      <li class="secondary"><a href="/logout"><i class="ti ti-logout"></i></a></li>
+      {{#if admin}}<li class="secondary"><a href="#" onclick="settingsModal(0)"><i class="ti ti-settings"></i></a></li>{{/if}}
+    </ul>
+  </nav>
+  <div class="tc-notes">
+     <div class="card-inner">
+      <div class="spacer">
+        <h1>Welcome, {{firstName}}!</h1>
+      </div>
+      <div class="spacer">
+        <h3><a class="nunderline" href="/dashboard"><i class="ti ti-home"></i>  Home</a> | <a class="nunderline" href="/dashboard/selfedit"><i class="ti ti-user"></i> Modify Account Info</a> | <a class="nunderline" href="/dashboard/notes"><i class="ti ti-notes"></i> Condo Notes</a></h3>
+      </div>
+    </div>
+  </div>
+  <div class="tc-inverse">
+    <div class="tci-inner">
+      <form action="/note/new" method="post">
+        <div class="spacer">
+          <label>Subject</label>
+          <input name="subject" type="text" placeholder="i.e. WiFi Password" maxlength="50" required>
+        </div>
+        <div class="spacer">
+          <label>Content</label>
+          <textarea name="content" rows="3" maxlength="1000" placeholder="A new note..." required></textarea>
+        </div>
+        <button class="btn-info btn-full" type="submit"><i class="ti ti-plus"></i> Add Note</button>
+      </form>
+    </div>
+  </div>
+  <div class="mp-notes">
+    <div class="mpc-notes">
+      {{#each note}}
+      <div class="absolute-wrapper aw-{{this.id}}">
+        <div class="note n-{{this.id}}">
+          <div class="note-inner">
+            <div class="note-heading">
+              <div class="spacer">
+                <h2>{{this.subject}}</h2>
+                <h4>Last updated by {{this.author}} on {{this.lastModified}}</h4>
+              </div>
+              <a class="sm-{{this.id}}" href="#" onclick="expandNote({{this.id}})"><i class="ti ti-caret-down"></i> Show More</a>
+            </div>
+            <div class="note-content nc-{{this.id}}">
+              <p><pre>{{this.content}}</pre></p>
+            </div>
+            <div class="note-alt-content ntdel-{{this.id}}">
+              <a href="/note/delete/?nid={{this.id}}"><button class="btn-danger"><i class="ti ti-trash"></i> Delete Note</button></a>
+            </div>
+            <div class="note-alt-content ntedit-{{this.id}}">
+              <form action="/note/edit" method="post">
+                <div class="spacer">
+                  <input type="text" name="subject" value="{{this.subject}}" required>
+                </div>
+                <div class="spacer">
+                  <textarea name="content" rows="3" required>{{this.content}}</textarea>
+                </div>
+                <input type="hidden" name="nid" value="{{this.id}}">
+                <button class="btn-white btn-full" type="submit"><i class="ti ti-edit"></i> Edit Note</button>
+              </form>
+            </div>
+          </div>
+          <div style="padding-top: 5px;">
+            <a class="note-option sl-{{this.id}} nunderline" style="float: left;" href="#" onclick="collapseNote({{this.id}})"><i class="ti ti-caret-up"></i> Show Less</a>
+            <a class="note-option sl-{{this.id}} nunderline" style="float: right; padding-left: 10px;" href="#" onclick="deleteNote({{this.id}})"><i class="ti ti-trash danger"></i></a>
+            <a class="note-option sl-{{this.id}} nunderline" style="float: right;" href="#" onclick="editNote({{this.id}})"><i class="ti ti-edit"></i></a>
+          </div>
+        </div>
+      </div>
+      {{/each}}
+    </div>
+  </div>
+  <div class="note-background"></div> <!-- make background darker on note expand -->
+  <script type="text/javascript" src="/js/jquery-3.6.0.min.js"></script>
+  <script src="/js/modal.js" type="text/javascript"></script>
+  <script src="/js/notes.js" type="text/javascript"></script>
+</body>
+</html>
