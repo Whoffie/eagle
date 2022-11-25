@@ -304,6 +304,17 @@ app.post("/user/edit", (req, res) => {
             var admin = 1
         }else {
             var admin = 0
+
+            if (parseInt(req.body.uid) == req.session.uid) {
+                req.session.error = "You have removed admin permissions from this account. Changes will take effect the next time you login."
+            }
+
+            if (parseInt(req.body.uid) !== req.session.uid) {
+                req.session.error = "You may not remove another user's admin status!"
+                res.redirect("/dashboard/users")
+
+                return 0 // stop!
+            }
         }
 
         var stmt = "SELECT `groupName` FROM `usergroups` WHERE `id`=?"
@@ -311,10 +322,8 @@ app.post("/user/edit", (req, res) => {
         con.query(stmt, [req.body.group], (err, groupName) => {
             var stmt = "UPDATE `userdata` SET `firstName`=?, `lastName`=?, `address`=?, `address2`=?, `city`=?, `state`=?, `zipcode`=?, `phoneNumber`=?, `email`=?, `userGroup`=?, `groupName`=?, `admin`=? WHERE `id`=?"
 
-            con.query(stmt, [req.body.fname, req.body.lname, req.body.address, req.body.address2, req.body.city, req.body.state, req.body.zipcode, req.body.phone, req.body.email, req.body.group, groupName[0].groupName, admin, req.body.uid], (err, val) => {
-                console.log(err)
-                res.redirect("/dashboard/users?modal=uedit&uid=" + req.body.uid)
-            })
+            con.query(stmt, [req.body.fname, req.body.lname, req.body.address, req.body.address2, req.body.city, req.body.state, req.body.zipcode, req.body.phone, req.body.email, req.body.group, groupName[0].groupName, admin, req.body.uid])
+            res.redirect("/dashboard/users?modal=uedit&uid=" + req.body.uid)
         })
     }else {
         res.redirect("/")
