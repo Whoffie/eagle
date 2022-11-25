@@ -262,6 +262,17 @@
               <input type="number" name="zipcode" placeholder="Zipcode" value="{{this.zipcode}}" min="0" required>
             </div>
             <div class="spacer">
+              <select name="group" style="width: 100%">
+                {{#each ../userGroups}}
+                {{#ifEquals this.id ../this.userGroup}}
+                <option value="{{this.id}}" selected>{{this.groupName}}</option>
+                {{else}}
+                <option value="{{this.id}}">{{this.groupName}}</option>
+                {{/ifEquals}}
+                {{/each}}
+              </select>
+            </div>
+            <div class="spacer">
               {{#ifEquals this.admin 0}}
               <input type="checkbox" name="admin" id="admin" style="margin-left: 5px">
               {{else}}

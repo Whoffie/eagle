@@ -305,11 +305,16 @@ app.post("/user/edit", (req, res) => {
         }else {
             var admin = 0
         }
-        
-        var stmt = "UPDATE `userdata` SET `firstName`=?, `lastName`=?, `address`=?, `address2`=?, `city`=?, `state`=?, `zipcode`=?, `phoneNumber`=?, `email`=?, `admin`=? WHERE `id`=?"
 
-        con.query(stmt, [req.body.fname, req.body.lname, req.body.address, req.body.address2, req.body.city, req.body.state, req.body.zipcode, req.body.phone, req.body.email, admin, req.body.uid], (err, val) => {
-            res.redirect("/dashboard/users?modal=uedit&uid=" + req.body.uid)
+        var stmt = "SELECT `groupName` FROM `usergroups` WHERE `id`=?"
+
+        con.query(stmt, [req.body.group], (err, groupName) => {
+            var stmt = "UPDATE `userdata` SET `firstName`=?, `lastName`=?, `address`=?, `address2`=?, `city`=?, `state`=?, `zipcode`=?, `phoneNumber`=?, `email`=?, `userGroup`=?, `groupName`=?, `admin`=? WHERE `id`=?"
+
+            con.query(stmt, [req.body.fname, req.body.lname, req.body.address, req.body.address2, req.body.city, req.body.state, req.body.zipcode, req.body.phone, req.body.email, req.body.group, groupName[0].groupName, admin, req.body.uid], (err, val) => {
+                console.log(err)
+                res.redirect("/dashboard/users?modal=uedit&uid=" + req.body.uid)
+            })
         })
     }else {
         res.redirect("/")
