@@ -88,8 +88,22 @@ function settingsModal(page) {
 
     if (page == 0) {
         window.history.replaceState({}, document.title, "/dashboard?modal=settings")
-    }else {
+    }
+
+    if (page == 1) {
         window.history.replaceState({}, document.title, "/dashboard/users?modal=settings")
+    }
+
+    if (page == 2) {
+        window.history.replaceState({}, document.title, "/dashboard/notes?modal=settings")
+    }
+
+    if (page == 3) {
+        window.history.replaceState({}, document.title, "/dashboard/partnerdir?modal=settings")
+    }
+
+    if (page == 4) {
+        window.history.replaceState({}, document.title, "/dashboard/selfedit?modal=settings")
     }
 }
 
@@ -99,9 +113,23 @@ function settingsClose(page) { /* close action for dashboard */
 
     if (page == 0) {
         window.history.replaceState({}, document.title, "/dashboard")
-    }else {
+    }
+
+    if(page == 1) {
         window.history.replaceState({}, document.title, "/dashboard/users")
-    } 
+    }
+
+    if (page == 2) {
+        window.history.replaceState({}, document.title, "/dashboard/notes")
+    }
+
+    if (page == 3) {
+        window.history.replaceState({}, document.title, "/dashboard/partnerdir")
+    }
+
+    if (page == 4) {
+        window.history.replaceState({}, document.title, "/dashboard/selfedit")
+    }
 }
 
 $(document).ready(function() { // restore modal states    

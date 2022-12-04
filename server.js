@@ -386,6 +386,29 @@ app.get("/dashboard/selfedit", (req, res) => {
             req.session.error = null
         }
 
+        var stmt = "SELECT DISTINCT `year` FROM `schedule`"
+            
+        con.query(stmt, (err, scheduleYears) => {
+            var yearList = []
+            let now = new Date() /* move current date to the top of the list */
+
+            for (let i = 0; i < scheduleYears.length; i++) {
+                if (parseInt(scheduleYears[i].year) !== now.getFullYear()) {
+                    yearList.push(scheduleYears[i].year) // push like normal
+                }else {
+                    yearList.unshift(scheduleYears[i].year) // move current year to the back if no default filter is selected
+                }
+            }
+
+            res.locals.year = yearList.sort()
+        })
+
+        var stmt = "SELECT `value` FROM `settings` WHERE `setting`='webmaster'"
+
+        con.query(stmt, (err, webmaster) => {
+            res.locals.webmaster = webmaster[0].value
+        })
+
         var stmt = "SELECT * FROM `userdata` WHERE `id`=?"
 
         con.query(stmt, [req.session.uid], (err, userdata) => {
@@ -619,6 +642,29 @@ app.get("/dashboard/partnerdir", (req, res) => {
         if (req.session.admin) {
             res.locals.admin = true
         }
+
+        var stmt = "SELECT DISTINCT `year` FROM `schedule`"
+        
+        con.query(stmt, (err, scheduleYears) => {
+            var yearList = []
+            let now = new Date() /* move current date to the top of the list */
+
+            for (let i = 0; i < scheduleYears.length; i++) {
+                if (parseInt(scheduleYears[i].year) !== now.getFullYear()) {
+                    yearList.push(scheduleYears[i].year) // push like normal
+                }else {
+                    yearList.unshift(scheduleYears[i].year) // move current year to the back if no default filter is selected
+                }
+            }
+
+            res.locals.year = yearList.sort()
+        })
+
+        var stmt = "SELECT `value` FROM `settings` WHERE `setting`='webmaster'"
+
+        con.query(stmt, (err, webmaster) => {
+            res.locals.webmaster = webmaster[0].value
+        })
         
         var stmt = "SELECT `firstName`, `lastName`, `email`, `groupName` FROM `userdata`"
         
@@ -633,6 +679,29 @@ app.get("/dashboard/notes", (req, res) => {
         if (req.session.admin) {
             res.locals.admin = true
         }
+
+        var stmt = "SELECT DISTINCT `year` FROM `schedule`"
+        
+        con.query(stmt, (err, scheduleYears) => {
+            var yearList = []
+            let now = new Date() /* move current date to the top of the list */
+
+            for (let i = 0; i < scheduleYears.length; i++) {
+                if (parseInt(scheduleYears[i].year) !== now.getFullYear()) {
+                    yearList.push(scheduleYears[i].year) // push like normal
+                }else {
+                    yearList.unshift(scheduleYears[i].year) // move current year to the back if no default filter is selected
+                }
+            }
+
+            res.locals.year = yearList.sort()
+        })
+
+        var stmt = "SELECT `value` FROM `settings` WHERE `setting`='webmaster'"
+
+        con.query(stmt, (err, webmaster) => {
+            res.locals.webmaster = webmaster[0].value
+        })
 
         var stmt = "SELECT * FROM `notes` ORDER BY `subject` ASC"
 
@@ -732,8 +801,26 @@ app.get("/schedule/delete", (req, res) => {
 
         if (req.query.from == "dashboard") {
             res.redirect("/dashboard?modal=settings")
-        }else { /* as of now, the only other page this action could be performed from is admin/users page, so redirect there */
+        }
+
+        if (req.query.from == "notes") {
+            res.redirect("/dashboard/notes?modal=settings")
+        }
+
+        if (req.query.from == "admin") {
             res.redirect("/dashboard/users?modal=settings")
+        }
+
+        if (req.query.from == "notes") {
+            res.redirect("/dashboard/notes?modal=settings")
+        }
+
+        if (req.query.from == "selfedit") {
+            res.redirect("/dashboard/selfedit?modal=settings")
+        }
+
+        if (req.query.from == "partnerdir") {
+            res.redirect("/dashboard/partnerdir?modal=settings")
         }
     }
 })
@@ -755,8 +842,22 @@ app.post("/settings/webmaster", (req, res) => {
 
             if (req.body.from == "dashboard") {
                 res.redirect("/dashboard?modal=settings")
-            }else {
+            }
+
+            if (req.body.from == "notes") {
+                res.redirect("/dashboard/notes?modal=settings")
+            }
+
+            if (req.body.from == "admin") {
                 res.redirect("/dashboard/users?modal=settings")
+            }
+
+            if (req.body.from == "partnerdir") {
+                res.redirect("/dashboard/partnerdir?modal=settings")
+            }
+
+            if (req.body.from == "selfedit") {
+                res.redirect("/dashboard/selfedit?modal=settings")
             }
         })
     }else {

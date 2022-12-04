@@ -301,6 +301,7 @@
             <form action="/settings/webmaster" method="post">
               <label>Webmaster Contact Email</label><br>
               <input type="text" class="inline normal" name="email" placeholder="Administration Contact Email" value="{{webmaster}}">
+              <input type="hidden" name="from" value="admin">
               <button type="submit" class="inline small btn-info"><i class="ti ti-check"></i></button>
             </form>
           </div>
@@ -314,7 +315,7 @@
               {{#each year}}
               <tr>
                 <td>{{this}}</td>
-                <td><a href="/schedule/delete?year={{this}}&from=dashboard" class="danger"><i class="ti ti-trash"></i></a></td>
+                <td><a href="/schedule/delete?year={{this}}&from=admin" class="danger"><i class="ti ti-trash"></i></a></td>
               </tr>
               {{/each}}
             </table>

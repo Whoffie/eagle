@@ -14,7 +14,7 @@
       <li><a href="/dashboard/partnerdir"><i class="ti ti-folders"></i> Partner Directory</a></li>
       {{#if admin}}<li><a href="/dashboard/users"><i class="ti ti-shield-lock"></i>  Admin</a></li>{{/if}}
       <li class="secondary"><a href="/logout"><i class="ti ti-logout"></i></a></li>
-      {{#if admin}}<li class="secondary"><a href="#" onclick="settingsModal(0)"><i class="ti ti-settings"></i></a></li>{{/if}}
+      {{#if admin}}<li class="secondary"><a href="#" onclick="settingsModal(2)"><i class="ti ti-settings"></i></a></li>{{/if}}
     </ul>
   </nav>
   <div class="tc-notes">
@@ -82,6 +82,42 @@
         </div>
       </div>
       {{/each}}
+    </div>
+  </div>
+  <div class="modal" id="settings">
+    <div class="inner" id="settings-inner">
+      <div class="spacer">
+        <div class="content">
+          <a href="#"><span class="close" onclick="settingsClose(2)"><i class="ti ti-square-x"></i></span></a>
+          <div class="spacer">
+            <h1>General Settings</h1>
+            <h3 class="warning"><i class="ti ti-shield-check"></i> This area is accessible to administrators only</h3>
+          </div>
+          <div class="spacer">
+            <form action="/settings/webmaster" method="post">
+              <label>Webmaster Contact Email</label><br>
+              <input type="text" class="inline normal" name="email" placeholder="Administration Contact Email" value="{{webmaster}}">
+              <input type="hidden" name="from" value="notes">
+              <button type="submit" class="inline small btn-info"><i class="ti ti-check"></i></button>
+            </form>
+          </div>
+          <div class="spacer">
+            <h2>Schedule Manager</h2>
+            <table>
+              <tr class="heavy">
+                <th>Year</th>
+                <th>Delete</th>
+              </tr>
+              {{#each year}}
+              <tr>
+                <td>{{this}}</td>
+                <td><a href="/schedule/delete?year={{this}}&from=notes" class="danger"><i class="ti ti-trash"></i></a></td>
+              </tr>
+              {{/each}}
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <div class="note-background"></div> <!-- make background darker on note expand -->
