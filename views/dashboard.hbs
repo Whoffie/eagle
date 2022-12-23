@@ -26,9 +26,6 @@
       <div class="spacer">
         <h3><a class="nunderline" href="/dashboard"><i class="ti ti-home"></i>  Home</a> | <a class="nunderline" href="/dashboard/selfedit"><i class="ti ti-user"></i> Modify Account Info</a> | <a class="nunderline" href="/dashboard/notes"><i class="ti ti-notes"></i> Condo Notes</a></h3>
       </div>
-      <div class="spacer">
-        <p>Use the dropdown below to view different schedules for different years. If a desired year is not listed, please contact an administrator.</p>
-      </div>
       <h4>Select year</h4>
       <form action="/dashboard/filter" method="post">
         <div class="spacer inline">
@@ -40,6 +37,9 @@
         </div>
         <button class="btn btn-info small"><i class="ti ti-filter"></i></button>
       </form>
+      <div class="spacer">
+        <p>Use the dropdown above to view different schedules for different years. If a desired year is not listed, please <a href="mailto:{{webmaster}}">contact an administrator</a>.</p>
+      </div>
     </div>
   </div>
   <div class="schedule t-wrapper">
