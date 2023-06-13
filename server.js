@@ -10,7 +10,7 @@ const port = 8080
 con = sql.createConnection({ // credentials for connection to database
     host: "localhost",
     user: "root",
-    password: "#Lego1031#",
+    password: "password123",
     database: "eagle"
 })
 
