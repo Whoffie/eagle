@@ -5,13 +5,14 @@ const sql = require("mysql")
 const session = require("express-session")
 const sqlStore = require("express-mysql-session")(session)
 const bcrypt = require("bcrypt")
+const env = require("dotenv").config()
 const port = 8080
 
 con = sql.createConnection({ // credentials for connection to database
-    host: "localhost",
-    user: "root",
-    password: "password123",
-    database: "eagle"
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DATABASE
 })
 
 con.connect() // initialize db connection
@@ -24,10 +25,10 @@ hbs.registerHelper('ifEquals', function(arg1, arg2, options) {
 
 const sqlSession = new sqlStore({ // for session storing (so the website remembers you and gains the ability to store session variables)
     connectionLimit: 10,
-    password: "#Lego1031#",
-    user: "root",
-    database: "eagle",
-    host: "localhost",
+    password: process.env.DB_PASSWORD,
+    user: process.env.DB_USER,
+    database: process.env.DATABASE,
+    host: process.env.DB_HOST,
     port: 3306,
     createDatabaseTable: true
 })
@@ -256,7 +257,7 @@ app.get("/dashboard", (req, res) => {
                                     res.locals.webmaster = webmaster[0].value
                                 }
 
-                                res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, year: yearList, setYear: req.session.filter })
+                                res.render("dashboard", { firstName: val[0]?.firstName, scheduleData: scheduleData, userGroups: groupNames, year: yearList, setYear: req.session.filter, filtered: true /* filtered: true so frontend doesn't reset dropdown */ })
 
                                 req.session.filter = null // kill filter variable
                             })

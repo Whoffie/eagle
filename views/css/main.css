@@ -40,7 +40,7 @@ footer {
 .mpsc {
     margin: 0 auto;
     padding: 70px 70px 70px 70px;
-    padding-top: 400px;
+    padding-top: 600px;
 }
 
 .heading {
@@ -325,24 +325,25 @@ button {
 }
 
 .t-wrapper-group {
-    height: 200px;
+    height: 283px;
     overflow-x: auto;
     overflow-y: scroll;
 }
 
 .t-wrapper {
     overflow-x: auto;
+    overflow-y: scroll;
 }
 
 .ut-wrapper {
     overflow-x: auto;
-    max-height: 314px;
+    max-height: 400px;
 }
 
 table {
     background-color: lightgray;
     width: 100%;
-    border: black 1px solid;
+    /* border: black 1px solid; */
     border-collapse: collapse; 
     text-align: center;
     color: black;
@@ -353,12 +354,16 @@ table {
 }
 
 table tr {
-    border-bottom: black 1px solid;
+    border-top: black 1px solid;
 }
 
 table .heavy {
-    border: black 2px solid;
+    border: none;
     color: black;
+    background-color: aliceblue;
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
 
 tr, th, td {
@@ -393,7 +398,7 @@ nav {
     position: fixed;
     width: 100%;
     top: 0;
-    z-index: 1;
+    z-index: 5;
 }
 
 nav ul {
@@ -588,7 +593,7 @@ pre {
     }
 
     .mpsc {
-        padding: 100px !important;
+        padding-top: 100px !important;
     }
 }
 
@@ -624,5 +629,9 @@ pre {
 @media screen and (max-width: 1955px) {
     .input-half {
         width: 100% !important;
+    }
+
+    .ut-wrapper {
+        max-height: 435px !important;
     }
 }
