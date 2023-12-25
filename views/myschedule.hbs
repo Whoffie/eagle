@@ -16,129 +16,82 @@
       <li><a href="/dashboard/notes"><i class="ti ti-notes"></i> Notes</a></li>
       {{#if admin}}<li><a href="/dashboard/users"><i class="ti ti-shield-lock"></i>  Admin</a></li>{{/if}}
       <li class="secondary"><a href="/logout"><i class="ti ti-logout"></i></a></li>
-      {{#if admin}}<li class="secondary"><a href="#" onclick="settingsModal(0)"><i class="ti ti-settings"></i></a></li>{{/if}}
+      {{#if admin}}<li class="secondary"><a href="#" onclick="settingsModal(5)"><i class="ti ti-settings"></i></a></li>{{/if}}
     </ul>
   </nav>
   <div class="titlecard">
      <div class="card-inner">
-      <div class="spacer">
-        <h1>Welcome, {{firstName}}!</h1>
-      </div>
-      <div class="spacer">
-        <h3><a class="nunderline" href="/dashboard/selfedit"><i class="ti ti-user"></i> Modify Account Info</a> | <a class="nunderline" href="/myschedule"><i class="ti ti-list-check"></i> My Schedule</a></h3>
-      </div>
-      <h4>Select year</h4>
-      <form action="/dashboard/filter" method="post">
-        <div class="spacer inline">
-          <select name="yearSelect" id="yearSelect" autocomplete="off">
-            {{#each year}}
-            <option value="{{this}}">{{this}}</option>
-            {{/each}}
-          </select>
+        <div class="spacer">
+          <h1>Welcome, {{firstName}}!</h1>
         </div>
-        <button class="btn btn-info small"><i class="ti ti-filter"></i></button>
-      </form>
-      <div class="spacer">
-        <p>Use the dropdown above to view different schedules for different years. If a desired year is not listed, please <a href="mailto:{{webmaster}}">contact an administrator</a>.</p>
+        <div class="spacer">
+          <h3><a class="nunderline" href="/dashboard/selfedit"><i class="ti ti-user"></i> Modify Account Info</a> | <a class="nunderline" href="/myschedule"><i class="ti ti-list-check"></i> My Schedule</a></h3>
+        </div>
+        <div class="spacer">
+          <p>View past and future weeks for the partner unit "{{groupName}}". Rows highlighted in yellow have been traded to your partner unit. Marking your time slots as "tradeable" will signal the availability of the slots to other partners.</p>
+        </div>
       </div>
     </div>
   </div>
   <div class="schedule t-wrapper">
     <table>
       <tr class="heavy">
-        <th>Week</th>
         <th>From</th>
         <th>To</th>
         <th>Condo Side</th>
-        <th>Scheduled - {{setYear}}</th>
-        <th>Actual - {{setYear}}</th>
-        <th>Tradeable</th>
+        <th>Original Unit</th>
+        <th>Current Unit</th>
         <th>Notes</th>
+        <th>Tradeable</th>
       </tr>
       </thead>
       {{#each scheduleData}}
       {{#ifEquals this.condoSide 0}}
       {{#ifEquals this.groupName this.actualGroup}}
       <tr>
-        <td>{{increment}}</td>
         <td>{{this.startDate}}</td>
         <td>{{this.endDate}}</td>
         <td>Snowbirds</td>
         <td>{{this.groupName}}</td>
-        <td><strong><a href="#" onclick="actualModal({{this.id}})" class="modal-schedule-{{this.id}}"><i class="ti ti-table-import"></i> {{this.actualGroup}}</a></strong></option></td>
-        {{#ifNotEquals this.tradeable 1}}<td><i class="ti ti-x"></i></td>{{/ifNotEquals}}
-        {{#ifEquals this.tradeable 1}}<td><i class="ti ti-check safe"></i></td>{{/ifEquals}}
+        <td>{{this.actualGroup}}</td>
         <td><a href="#" onclick="notesModal({{this.id}})"><i class="ti ti-notes"></i></a></td>
+        {{#ifEquals this.tradeable 0}}<td><form action="/myschedule/tradeable/true" method="POST"><input type="checkbox" name="available{{this.id}}" onChange="this.form.submit()"><input type="hidden" name="rowid" value="{{this.id}}"></form></td>{{else}} <td><form action="/myschedule/tradeable/false" method="POST"><input type="checkbox" name="available{{this.id}}" onChange="this.form.submit()" checked><input type="hidden" name="rowid" value="{{this.id}}"></form></td>{{/ifEquals}}
       </tr>
       {{else}}
       <tr class="highlight-row">
-        <td>{{increment}}</td>
         <td>{{this.startDate}}</td>
         <td>{{this.endDate}}</td>
         <td>Snowbirds</td>
         <td>{{this.groupName}}</td>
-        <td><strong><a href="#" onclick="actualModal({{this.id}})" class="modal-schedule-{{this.id}}"><i class="ti ti-table-import"></i> {{this.actualGroup}}</a></strong></option></td>
-        {{#ifNotEquals this.tradeable 1}}<td><i class="ti ti-x"></i></td>{{/ifNotEquals}}
-        {{#ifEquals this.tradeable 1}}<td><i class="ti ti-check safe"></i></td>{{/ifEquals}}
+        <td>{{this.actualGroup}}</td>
         <td><a href="#" onclick="notesModal({{this.id}})"><i class="ti ti-notes"></i></a></td>
+        {{#ifEquals this.tradeable 0}}<td><form action="/myschedule/tradeable/true" method="POST"><input type="checkbox" name="available{{this.id}}" onChange="this.form.submit()"><input type="hidden" name="rowid" value="{{this.id}}"></form></td>{{else}} <td><form action="/myschedule/tradeable/false" method="POST"><input type="checkbox" name="available{{this.id}}" onChange="this.form.submit()" checked><input type="hidden" name="rowid" value="{{this.id}}"></form></td>{{/ifEquals}}
       </tr>
       {{/ifEquals}}
       {{else}}
       {{#ifEquals this.groupName this.actualGroup}}
       <tr>
-        <td>&nbsp;</td>
         <td>{{this.startDate}}</td>
         <td>{{this.endDate}}</td>
         <td>Snowkats</td>
         <td>{{this.groupName}}</td>
-        <td><strong><a href="#" onclick="actualModal({{this.id}})" class="modal-schedule-{{this.id}}"><i class="ti ti-table-import"></i> {{this.actualGroup}}</a></strong></option></select></td>
-        {{#ifNotEquals this.tradeable 1}}<td><i class="ti ti-x"></i></td>{{/ifNotEquals}}
-        {{#ifEquals this.tradeable 1}}<td><i class="ti ti-check safe"></i></td>{{/ifEquals}}
+        <td>{{this.actualGroup}}</td>
         <td><a href="#" onclick="notesModal({{this.id}})"><i class="ti ti-notes"></i></a></td>
       </tr>
       {{else}}
       <tr class="highlight-row">
-        <td>&nbsp;</td>
         <td>{{this.startDate}}</td>
         <td>{{this.endDate}}</td>
         <td>Snowkats</td>
         <td>{{this.groupName}}</td>
-        <td><strong><a href="#" onclick="actualModal({{this.id}})" class="modal-schedule-{{this.id}}"><i class="ti ti-table-import"></i> {{this.actualGroup}}</a></strong></option></select></td>
-        {{#ifEquals this.tradeable 0}}<td><i class="ti ti-x"></i></td>{{/ifEquals}}
-        {{#ifEquals this.tradeable 1}}<td><i class="ti ti-check safe"></i></td>{{/ifEquals}}
+        <td>{{this.actualGroup}}</td>
         <td><a href="#" onclick="notesModal({{this.id}})"><i class="ti ti-notes"></i></a></td>
+        {{#ifEquals this.tradeable 0}}<td><form action="/myschedule/tradeable/true" method="POST"><input type="checkbox" name="available{{this.id}}" onChange="this.form.submit()"><input type="hidden" name="rowid" value="{{this.id}}"></form></td>{{else}} <td><form action="/myschedule/tradeable/false" method="POST"><input type="checkbox" name="available{{this.id}}" onChange="this.form.submit()" checked><input type="hidden" name="rowid" value="{{this.id}}"></form></td>{{/ifEquals}}
       </tr>
       {{/ifEquals}}
       {{/ifEquals}}
-      {{headingLoop}}
       {{/each}}
     </table>
-  </div>
-  {{#each scheduleData}}
-  <div class="modal actual-modal-{{this.id}}">
-    <div class="inner actual-inner-{{this.id}}">
-      <div class="spacer">
-        <div class="content">
-          <a href="#"><span class="close" onclick="actualClose({{this.id}})"><i class="ti ti-square-x"></i></span></a>
-          <h1>Changing Planned Schedule From "{{this.actualGroup}}" on {{this.startDate}}</h1>
-          <h3>Ensure that both parties involved in this switch approve of it. This change will be logged.</h3><br>
-          <form action="/schedule/edit/actual" method="post">
-            <div class="spacer">
-              <select name="newActual">
-                {{#each ../userGroups}}
-                <option value="{{this.id}}">{{this.groupName}}</option>
-                {{/each}}
-              </select>
-            </div>
-            <input type="hidden" name="id" value="{{this.id}}">
-            <input type="hidden" name="year" value="{{../setYear}}">
-            <button type="submit" class="btn-info btn-full"><i class="ti ti-edit"></i> Reschedule</button>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-  {{/each}}
   {{#each scheduleData}}
   <div class="modal notes-modal-{{this.id}}">
     <div class="inner notes-inner-{{this.id}}">
@@ -149,9 +102,10 @@
             <h1>Editing Notes for "{{this.actualGroup}}" on {{this.startDate}}</h1>
           </div>
           <form action="/schedule/edit/notes" method="post">
-            <textarea name="notes" rows="10">{{this.notes}}</textarea>
+            <div class="spacer">
+              <textarea name="notes" rows="10">{{this.notes}}</textarea>
+            </div>
             <input type="hidden" name="id" value="{{this.id}}">
-            <input type="hidden" name="year" value="{{../setYear}}">
             <button type="submit" class="btn-info btn-full"><i class="ti ti-edit"></i> Edit Notes</button>
           </form>
         </div>
@@ -159,11 +113,12 @@
     </div>
   </div>
   {{/each}}
+  </div>
   <div class="modal" id="settings">
     <div class="inner" id="settings-inner">
       <div class="spacer">
         <div class="content">
-          <a href="#"><span class="close" onclick="settingsClose(0)"><i class="ti ti-square-x"></i></span></a>
+          <a href="#"><span class="close" onclick="settingsClose(5)"><i class="ti ti-square-x"></i></span></a>
           <div class="spacer">
             <div class="spacer">
               <h1>General Settings</h1>
@@ -174,7 +129,7 @@
             <form action="/settings/webmaster" method="post">
               <label>Webmaster Contact Email</label><br>
               <input type="text" class="inline smallish" name="email" placeholder="Administration Contact Email" value="{{webmaster}}">
-              <input type="hidden" name="from" value="dashboard">
+              <input type="hidden" name="from" value="myschedule">
               <button type="submit" class="inline small btn-info"><i class="ti ti-check"></i></button>
             </form>
           </div>
@@ -191,7 +146,7 @@
               {{#each year}}
               <tr>
                 <td>{{this}}</td>
-                <td><a href="/schedule/delete?year={{this}}&from=dashboard" class="danger"><i class="ti ti-trash"></i></a></td>
+                <td><a href="/schedule/delete?year={{this}}&from=myschedule" class="danger"><i class="ti ti-trash"></i></a></td>
               </tr>
               {{/each}}
             </table>
@@ -201,9 +156,6 @@
     </div>
   </div>
   <script type="text/javascript" src="/js/jquery-3.6.0.min.js"></script>
-  {{#unless filtered}}
-  <script type="text/javascript" src="/js/yearselect.js"></script> <!-- autoset dropdown -->
-  {{/unless}}
   <script src="js/modal.js" type="text/javascript"></script>
 </body>
 </html>

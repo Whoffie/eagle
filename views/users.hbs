@@ -13,9 +13,10 @@
     <ul>
       <li><a href="/dashboard"><i class="ti ti-home"></i>  Home</a></li>
       <li><a href="/dashboard/partnerdir"><i class="ti ti-folders"></i> Partner Directory</a></li>
+      <li><a href="/dashboard/notes"><i class="ti ti-notes"></i> Notes</a></li>
       {{#if admin}}<li><a href="/dashboard/users"><i class="ti ti-shield-lock"></i>  Admin</a></li>{{/if}}
       <li class="secondary"><a href="/logout"><i class="ti ti-logout"></i></a></li>
-      {{#if admin}}<li class="secondary"><a href="#" onclick="settingsModal(0)"><i class="ti ti-settings"></i></a></li>{{/if}}
+      {{#if admin}}<li class="secondary"><a href="#" onclick="settingsModal(1)"><i class="ti ti-settings"></i></a></li>{{/if}}
     </ul>
   </nav>
   <div class="main-parent">
@@ -158,7 +159,7 @@
           {{/each}}
         </select>
       </div>
-      <button class="btn-info btn-full" form="schedule"><i class="ti ti-calendar-plus"></i> Change Schedule Order</button>
+      <a href="#"><button class="btn-info btn-full" form="schedule"><i class="ti ti-calendar-plus"></i> Change Schedule Order</button></a>
     </div>
   </div>
   {{#each userGroups}}
@@ -294,19 +295,24 @@
         <div class="content">
           <a href="#"><span class="close" onclick="settingsClose(1)"><i class="ti ti-square-x"></i></span></a>
           <div class="spacer">
-            <h1>General Settings</h1>
+            <div class="spacer">
+              <h1>General Settings</h1>
+            </div>
             <h3 class="warning"><i class="ti ti-shield-check"></i> This area is accessible to administrators only</h3>
           </div>
           <div class="spacer">
             <form action="/settings/webmaster" method="post">
               <label>Webmaster Contact Email</label><br>
-              <input type="text" class="inline normal" name="email" placeholder="Administration Contact Email" value="{{webmaster}}">
+              <input type="text" class="inline smallish" name="email" placeholder="Administration Contact Email" value="{{webmaster}}">
               <input type="hidden" name="from" value="admin">
               <button type="submit" class="inline small btn-info"><i class="ti ti-check"></i></button>
             </form>
           </div>
           <div class="spacer">
-            <h2>Schedule Manager</h2>
+            <div class="spacer text-center">
+              <h2>Schedule Manager</h2>
+              <h4 class="danger"><i class="ti ti-alert-triangle"></i> Deleted schedules are removed from this website permanently.</h4>
+            </div>
             <table>
               <tr class="heavy">
                 <th>Year</th>

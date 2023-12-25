@@ -55,6 +55,7 @@ form textarea {
     width: 100%;
     resize: none;
     box-sizing: border-box;
+    padding: 5px 5px 5px 5px;
 }
 
 .form-container {
@@ -119,6 +120,10 @@ input[type="number"] {
     width: 50% !important;
 }
 
+.smallish {
+    width: 35% !important;
+}
+
 .small { /* use for buttons */
     width: 25px !important; /* just enough for room for 1 tabler icon */
     padding: 2px;
@@ -133,7 +138,7 @@ input::-webkit-inner-spin-button {
 }
 
 input[type=number] {
-    -moz-appearance:textfield; /* Firefox */
+    -moz-appearance: textfield; /* Firefox */
 }
 
 .input-half {
@@ -559,6 +564,10 @@ pre {
 
 .note-alt-content {
     display: none;
+}
+
+.text-center {
+    text-align: center;
 }
 
 @media screen and (max-width: 946px) {

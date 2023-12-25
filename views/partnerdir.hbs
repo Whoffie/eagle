@@ -13,16 +13,27 @@
     <ul>
       <li><a href="/dashboard"><i class="ti ti-home"></i>  Home</a></li>
       <li><a href="/dashboard/partnerdir"><i class="ti ti-folders"></i> Partner Directory</a></li>
+      <li><a href="/dashboard/notes"><i class="ti ti-notes"></i> Notes</a></li>
       {{#if admin}}<li><a href="/dashboard/users"><i class="ti ti-shield-lock"></i>  Admin</a></li>{{/if}}
       <li class="secondary"><a href="/logout"><i class="ti ti-logout"></i></a></li>
       {{#if admin}}<li class="secondary"><a href="#" onclick="settingsModal(3)"><i class="ti ti-settings"></i></a></li>{{/if}}
     </ul>
   </nav>
-  <div class="main-parent">
+  <div class="titlecard">
+     <div class="card-inner">
+      <div class="spacer">
+        <h1>Welcome, {{firstName}}!</h1>
+      </div>
+      <div class="spacer">
+        <h3><a class="nunderline" href="/dashboard/selfedit"><i class="ti ti-user"></i> Modify Account Info</a> | <a class="nunderline" href="/myschedule"><i class="ti ti-list-check"></i> My Schedule</a></h3>
+      </div>
+      <p>Click on any email address below to contact a given partner</p>
+    </div>
+  </div>
+  <div class="main-parent" style="padding-top: 0px">
     <div class="main-child">
       <div class="spacer">
         <h1 class="spacer">Partner Directory</h1>
-        <h3>Click on any email address below to contact a given partner</h3>
       </div>
       <div class="schedule t-wrapper">
         <table>

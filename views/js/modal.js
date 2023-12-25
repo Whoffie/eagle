@@ -105,6 +105,10 @@ function settingsModal(page) {
     if (page == 4) {
         window.history.replaceState({}, document.title, "/dashboard/selfedit?modal=settings")
     }
+
+    if (page == 5) {
+        window.history.replaceState({}, document.title, "/myschedule/?modal=settings")
+    }
 }
 
 function settingsClose(page) { /* close action for dashboard */
@@ -129,6 +133,10 @@ function settingsClose(page) { /* close action for dashboard */
 
     if (page == 4) {
         window.history.replaceState({}, document.title, "/dashboard/selfedit")
+    }
+
+    if (page == 5) {
+        window.history.replaceState({}, document.title, "/myschedule")
     }
 }
 

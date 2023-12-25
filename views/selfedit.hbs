@@ -11,6 +11,7 @@
       <ul>
         <li><a href="/dashboard"><i class="ti ti-home"></i>  Home</a></li>
         <li><a href="/dashboard/partnerdir"><i class="ti ti-folders"></i> Partner Directory</a></li>
+        <li><a href="/dashboard/notes"><i class="ti ti-notes"></i> Notes</a></li>
         {{#if admin}}<li><a href="/dashboard/users"><i class="ti ti-shield-lock"></i>  Admin</a></li>{{/if}}
         <li class="secondary"><a href="/logout"><i class="ti ti-logout"></i></a></li>
         {{#if admin}}<li class="secondary"><a href="#" onclick="settingsModal(4)"><i class="ti ti-settings"></i></a></li>{{/if}}
@@ -72,41 +73,46 @@
       </div>
     </div>
     <div class="modal" id="settings">
-      <div class="inner" id="settings-inner">
-        <div class="spacer">
-          <div class="content">
-            <a href="#"><span class="close" onclick="settingsClose(4)"><i class="ti ti-square-x"></i></span></a>
+    <div class="inner" id="settings-inner">
+      <div class="spacer">
+        <div class="content">
+          <a href="#"><span class="close" onclick="settingsClose(4)"><i class="ti ti-square-x"></i></span></a>
+          <div class="spacer">
             <div class="spacer">
               <h1>General Settings</h1>
-              <h3 class="warning"><i class="ti ti-shield-check"></i> This area is accessible to administrators only</h3>
             </div>
-            <div class="spacer">
-              <form action="/settings/webmaster" method="post">
-                <label>Webmaster Contact Email</label><br>
-                <input type="text" class="inline normal" name="email" placeholder="Administration Contact Email" value="{{webmaster}}">
-                <input type="hidden" name="from" value="selfedit">
-                <button type="submit" class="inline small btn-info"><i class="ti ti-check"></i></button>
-              </form>
-            </div>
-            <div class="spacer">
+            <h3 class="warning"><i class="ti ti-shield-check"></i> This area is accessible to administrators only</h3>
+          </div>
+          <div class="spacer">
+            <form action="/settings/webmaster" method="post">
+              <label>Webmaster Contact Email</label><br>
+              <input type="text" class="inline smallish" name="email" placeholder="Administration Contact Email" value="{{webmaster}}">
+              <input type="hidden" name="from" value="selfedit">
+              <button type="submit" class="inline small btn-info"><i class="ti ti-check"></i></button>
+            </form>
+          </div>
+          <div class="spacer">
+            <div class="spacer text-center">
               <h2>Schedule Manager</h2>
-              <table>
-                <tr class="heavy">
-                  <th>Year</th>
-                  <th>Delete</th>
-                </tr>
-                {{#each year}}
-                <tr>
-                  <td>{{this}}</td>
-                  <td><a href="/schedule/delete?year={{this}}&from=selfedit" class="danger"><i class="ti ti-trash"></i></a></td>
-                </tr>
-                {{/each}}
-              </table>
+              <h4 class="danger"><i class="ti ti-alert-triangle"></i> Deleted schedules are removed from this website permanently.</h4>
             </div>
+            <table>
+              <tr class="heavy">
+                <th>Year</th>
+                <th>Delete</th>
+              </tr>
+              {{#each year}}
+              <tr>
+                <td>{{this}}</td>
+                <td><a href="/schedule/delete?year={{this}}&from=selfedit" class="danger"><i class="ti ti-trash"></i></a></td>
+              </tr>
+              {{/each}}
+            </table>
           </div>
         </div>
       </div>
     </div>
+  </div>
     <script type="text/javascript" src="/js/jquery-3.6.0.min.js"></script>
     <script src="/js/modal.js" type="text/javascript"></script>
   </body>

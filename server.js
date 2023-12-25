@@ -23,6 +23,10 @@ hbs.registerHelper('ifEquals', function(arg1, arg2, options) {
     return (arg1 == arg2) ? options.fn(this) : options.inverse(this)
 })
 
+hbs.registerHelper('ifNotEquals', function(arg1, arg2, options) {
+    return (arg1 !== arg2) ? options.fn(this) : options.inverse(this)
+})
+
 const sqlSession = new sqlStore({ // for session storing (so the website remembers you and gains the ability to store session variables)
     connectionLimit: 10,
     password: process.env.DB_PASSWORD,
@@ -115,16 +119,34 @@ app.post("/login", (req, res) => {
 
                                 res.redirect("dashboard")
                             }else {
-                                res.render("login", { error: "This user has not yet been approved by this website's administrator. Please try again later." })
+                                con.query("SELECT `value` FROM `settings` WHERE `setting`='webmaster'", (err, webmaster) => {
+                                    if (webmaster.length !== 0) {
+                                        res.locals.webmaster = webmaster[0].value
+                                    }
+
+                                    res.render("login", { error: "This user has not yet been approved by this website's administrator. Please try again later." }) // ideally this error would be in the form of a session variable like on line 158, etc.
+                                })
                             }
                         })
                     }else {
-                        res.render("login", { error: "Incorrect email or password" })
+                        con.query("SELECT `value` FROM `settings` WHERE `setting`='webmaster'", (err, webmaster) => {
+                            if (webmaster.length !== 0) {
+                                res.locals.webmaster = webmaster[0].value
+                            }
+
+                            res.render("login", { error: "Incorrect email or password" })
+                        })
                     }
                 })
             })
-        }else { 
-            res.render("login", { error: "Incorrect email or password" })
+        }else {
+            con.query("SELECT `value` FROM `settings` WHERE `setting`='webmaster'", (err, webmaster) => {
+                if (webmaster.length !== 0) {
+                    res.locals.webmaster = webmaster[0].value
+                }
+
+                res.render("login", { error: "Incorrect email or password" })
+            })            
         }
     })
 })
@@ -215,7 +237,7 @@ app.get("/dashboard", (req, res) => {
                                     if (entryCount == 14) {
                                         entryCount = 0
                         
-                                        return new hbs.SafeString(`<tr class="heavy"><th>Week</th><th>From</th><th>To</th><th>Condo Side</th><th>Scheduled - ` + now.getFullYear() + `</th><th>Actual - ` + now.getFullYear() + `</th><th>Notes</th></tr>`)
+                                        return new hbs.SafeString(`<tr class="heavy"><th>Week</th><th>From</th><th>To</th><th>Condo Side</th><th>Scheduled - ` + now.getFullYear() + `</th><th>Actual - ` + now.getFullYear() + `</th><th>Tradeable</th><th>Notes</th></tr>`)
                                     }
                                 })
 
@@ -249,7 +271,7 @@ app.get("/dashboard", (req, res) => {
                         
                                     if (entryCount == 14) {
                                         entryCount = 0
-                                        return new hbs.SafeString(`<tr class="heavy"><th>Week</th><th>From</th><th>To</th><th>Condo Side</th><th>Scheduled - ` + filterYear + `</th><th>Actual - ` + filterYear + `</th><th>Notes</th></tr>`)
+                                        return new hbs.SafeString(`<tr class="heavy"><th>Week</th><th>From</th><th>To</th><th>Condo Side</th><th>Scheduled - ` + filterYear + `</th><th>Actual - ` + filterYear + `</th><th>Tradeable</th><th>Notes</th></tr>`)
                                     }
                                 })
 
@@ -580,8 +602,8 @@ app.post("/schedule/edit", (req, res) => {
                     let emm = String(sbendDate.getMonth() + 1).padStart(2, '0')
                     let eyyyy = sbendDate.getFullYear()
     
-                    var stmt = "INSERT INTO `schedule` (`startDate`, `groupID`, `groupName`, `year`, `condoSide`, `actualGroup`, `endDate`) VALUES (?, ?, ?, ?, ?, ?, ?)"
-                    con.query(stmt, [smm + "/" + sdd + "/" + syyyy, snowbirdValues[i], val[0].groupName, req.body.year, 0, val[0].groupName, emm + "/" + edd + "/" + eyyyy])
+                    var stmt = "INSERT INTO `schedule` (`startDate`, `groupID`, `groupName`, `year`, `condoSide`, `actualGroup`, `endDate`, `tradeable`, `actualID`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                    con.query(stmt, [smm + "/" + sdd + "/" + syyyy, snowbirdValues[i], val[0].groupName, req.body.year, 0, val[0].groupName, emm + "/" + edd + "/" + eyyyy, 0, snowbirdValues[i]])
 
                     snowbirdSchedule.setDate(snowbirdSchedule.getDate() + 7)
                 })  
@@ -620,8 +642,8 @@ app.post("/schedule/edit", (req, res) => {
                     let emm = String(skendDate.getMonth() + 1).padStart(2, '0')
                     let eyyyy = skendDate.getFullYear()
     
-                    var stmt = "INSERT INTO `schedule` (`startDate`, `groupID`, `groupName`, `year`, `condoSide`, `actualGroup`, `endDate`) VALUES (?, ?, ?, ?, ?, ?, ?)"
-                    con.query(stmt, [smm + "/" + sdd + "/" + syyyy, snowkatValues[i], val[0].groupName, req.body.year, 1, val[0].groupName, emm + "/" + edd + "/" + eyyyy])
+                    var stmt = "INSERT INTO `schedule` (`startDate`, `groupID`, `groupName`, `year`, `condoSide`, `actualGroup`, `endDate`, `tradeable`, `actualID`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                    con.query(stmt, [smm + "/" + sdd + "/" + syyyy, snowkatValues[i], val[0].groupName, req.body.year, 1, val[0].groupName, emm + "/" + edd + "/" + eyyyy, 0, snowkatValues[i]])
 
                     snowkatSchedule.setDate(snowkatSchedule.getDate() + 7)
                 })  
@@ -639,10 +661,14 @@ app.post("/schedule/edit", (req, res) => {
 })
 
 app.get("/dashboard/partnerdir", (req, res) => {
-    if (req.session.auth) {
+    if (req.session.auth && req.session.uid) {
         if (req.session.admin) {
             res.locals.admin = true
         }
+
+        con.query("SELECT `firstName` FROM `userdata` WHERE `id`=?", [req.session.uid], (err, name) => {
+            res.locals.firstName = name[0].firstName
+        })
 
         var stmt = "SELECT DISTINCT `year` FROM `schedule`"
         
@@ -718,24 +744,33 @@ app.get("/dashboard/notes", (req, res) => {
 })
 
 app.post("/schedule/edit/actual", (req, res) => { /* modify actual group for a schedule row */
-    if (req.session.auth && req.body.id && req.body.newActual && req.body.year) {
-         var stmt = "UPDATE `schedule` SET `actualGroup`=? WHERE `id`=?"
+    if (req.session.auth && req.session.uid && req.body.id && req.body.newActual && req.body.year) {
+        let stmt = "SELECT `groupName` FROM `usergroups` WHERE `id`=?"
 
-         con.query(stmt, [req.body.newActual, req.body.id])
-         req.session.filter = req.body.year // so we don't default to current year when this field is updated
-         res.redirect("/dashboard") /* updated! */
+        con.query(stmt, [req.body.newActual], (err, group) => {            
+            let stmt = "UPDATE `schedule` SET `actualGroup`=?, `tradeable`=?, `actualID`=? WHERE `id`=?"
+            con.query(stmt, [group[0].groupName, 0, req.body.newActual, req.body.id])
+            
+            req.session.filter = req.body.year // so we don't default to current year when this field is updated
+            res.redirect("/dashboard") /* updated! */
+        })
     }else {
         res.redirect("/")
     }
 })
 
 app.post("/schedule/edit/notes", (req, res) => { /* modify actual group for a schedule row */
-    if (req.session.auth && req.body.id && req.body.year) {
-         var stmt = "UPDATE `schedule` SET `notes`=? WHERE `id`=?"
+    if (req.session.auth && req.body.id) {
+        var stmt = "UPDATE `schedule` SET `notes`=? WHERE `id`=?"
 
-         con.query(stmt, [req.body.notes, req.body.id])
-         req.session.filter = req.body.year
-         res.redirect("/dashboard") /* updated! */
+        con.query(stmt, [req.body.notes, req.body.id])
+
+        if (req.body.year) { // if year is set user is coming from the dashboard, if not, direct to 'myschedule' page
+            req.session.filter = req.body.year
+            res.redirect("/dashboard") /* updated! */
+        }else {
+            res.redirect("/myschedule")
+        }
     }else {
         res.redirect("/")
     }
@@ -823,6 +858,10 @@ app.get("/schedule/delete", (req, res) => {
         if (req.query.from == "partnerdir") {
             res.redirect("/dashboard/partnerdir?modal=settings")
         }
+
+        if (req.query.from == "myschedule") {
+            res.redirect("/myschedule?modal=settings")
+        }
     }
 })
 
@@ -859,6 +898,10 @@ app.post("/settings/webmaster", (req, res) => {
 
             if (req.body.from == "selfedit") {
                 res.redirect("/dashboard/selfedit?modal=settings")
+            }
+
+            if (req.body.from == "myschedule") {
+                res.redirect("/myschedule/?modal=settings")
             }
         })
     }else {
@@ -927,6 +970,85 @@ app.post("/note/edit", (req, res) => {
             })
         }else {
             res.redirect("/dashboard/notes")
+        }
+    }else {
+        res.redirect("/")
+    }
+})
+
+app.get("/myschedule", (req, res) => {
+    if (req.session.auth && req.session.uid) {
+        if (req.session.admin) {
+            res.locals.admin = true
+        }
+
+        con.query("SELECT `value` FROM `settings` WHERE `setting`='webmaster'", (err, webmaster) => {
+            res.locals.webmaster = webmaster[0].value
+        })
+        
+        con.query("SELECT `firstName` FROM `userdata` WHERE `id`=?", [req.session.uid], (err, user) => {
+            res.locals.firstName = user[0].firstName
+        })
+
+        con.query("SELECT * FROM `usergroups`", (err, groupNames) => {
+            res.locals.userGroups = groupNames
+        })
+        
+        con.query("SELECT DISTINCT `year` FROM `schedule`", (err, scheduleYears) => { // for settings modal
+            var yearList = []
+            let now = new Date() /* move current date to the top of the list */
+
+            for (let i = 0; i < scheduleYears.length; i++) {
+                if (parseInt(scheduleYears[i].year) !== now.getFullYear()) {
+                    yearList.push(scheduleYears[i].year) // push like normal
+                }else {
+                    yearList.unshift(scheduleYears[i].year) // move current year to the back if no default filter is selected
+                }
+            }
+
+            res.locals.year = yearList.sort()
+        })
+
+        let stmt = "SELECT `userGroup`, `groupName` FROM `userdata` WHERE `id`=?"
+
+        con.query(stmt, [req.session.uid], (err, groupValues) => {
+            let stmt = "SELECT * FROM `schedule` WHERE `actualID`=? ORDER BY `startDate` ASC"
+
+            con.query(stmt, [groupValues[0].userGroup], (err, schedule) => {
+                res.render("myschedule", { scheduleData: schedule, groupName: groupValues[0].groupName })
+            })
+        })
+    }else {
+        res.redirect("/")
+    }
+})
+
+app.post("/myschedule/tradeable/true", (req, res) => { // at some point fix security problems here but it's not really that urgent
+    if (req.session.auth) {
+        if (req.body.rowid) { // rowid that points to the row being made tradeable
+            let stmt = "UPDATE `schedule` SET `tradeable`=1 WHERE `id`=?"
+
+            con.query(stmt, [req.body.rowid])
+
+            res.redirect("/myschedule")
+        }else {
+            res.redirect("/myschedule")
+        }
+    }else {
+        res.redirect("/")
+    }
+})
+
+app.post("/myschedule/tradeable/false", (req, res) => {
+    if (req.session.auth) {
+        if (req.body.rowid) { // rowid that points to the row being made tradeable
+            let stmt = "UPDATE `schedule` SET `tradeable`=0 WHERE `id`=?"
+
+            con.query(stmt, [req.body.rowid])
+
+            res.redirect("/myschedule")
+        }else {
+            res.redirect("/myschedule")
         }
     }else {
         res.redirect("/")

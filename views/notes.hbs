@@ -12,6 +12,7 @@
     <ul>
       <li><a href="/dashboard"><i class="ti ti-home"></i>  Home</a></li>
       <li><a href="/dashboard/partnerdir"><i class="ti ti-folders"></i> Partner Directory</a></li>
+      <li><a href="/dashboard/notes"><i class="ti ti-notes"></i> Notes</a></li>
       {{#if admin}}<li><a href="/dashboard/users"><i class="ti ti-shield-lock"></i>  Admin</a></li>{{/if}}
       <li class="secondary"><a href="/logout"><i class="ti ti-logout"></i></a></li>
       {{#if admin}}<li class="secondary"><a href="#" onclick="settingsModal(2)"><i class="ti ti-settings"></i></a></li>{{/if}}
@@ -23,7 +24,7 @@
         <h1>Welcome, {{firstName}}!</h1>
       </div>
       <div class="spacer">
-        <h3><a class="nunderline" href="/dashboard"><i class="ti ti-home"></i>  Home</a> | <a class="nunderline" href="/dashboard/selfedit"><i class="ti ti-user"></i> Modify Account Info</a> | <a class="nunderline" href="/dashboard/notes"><i class="ti ti-notes"></i> Condo Notes</a></h3>
+        <h3><a class="nunderline" href="/dashboard/selfedit"><i class="ti ti-user"></i> Modify Account Info</a> | <a class="nunderline" href="/myschedule"><i class="ti ti-list-check"></i> My Schedule</a></h3>
       </div>
     </div>
   </div>
@@ -67,7 +68,7 @@
                   <input type="text" name="subject" value="{{this.subject}}" required>
                 </div>
                 <div class="spacer">
-                  <textarea name="content" rows="3" required>{{this.content}}</textarea>
+                  <textarea name="content" rows="6" required>{{this.content}}</textarea>
                 </div>
                 <input type="hidden" name="nid" value="{{this.id}}">
                 <button class="btn-white btn-full" type="submit"><i class="ti ti-edit"></i> Edit Note</button>
@@ -90,19 +91,24 @@
         <div class="content">
           <a href="#"><span class="close" onclick="settingsClose(2)"><i class="ti ti-square-x"></i></span></a>
           <div class="spacer">
-            <h1>General Settings</h1>
+            <div class="spacer">
+              <h1>General Settings</h1>
+            </div>
             <h3 class="warning"><i class="ti ti-shield-check"></i> This area is accessible to administrators only</h3>
           </div>
           <div class="spacer">
             <form action="/settings/webmaster" method="post">
               <label>Webmaster Contact Email</label><br>
-              <input type="text" class="inline normal" name="email" placeholder="Administration Contact Email" value="{{webmaster}}">
+              <input type="text" class="inline smallish" name="email" placeholder="Administration Contact Email" value="{{webmaster}}">
               <input type="hidden" name="from" value="notes">
               <button type="submit" class="inline small btn-info"><i class="ti ti-check"></i></button>
             </form>
           </div>
           <div class="spacer">
-            <h2>Schedule Manager</h2>
+            <div class="spacer text-center">
+              <h2>Schedule Manager</h2>
+              <h4 class="danger"><i class="ti ti-alert-triangle"></i> Deleted schedules are removed from this website permanently.</h4>
+            </div>
             <table>
               <tr class="heavy">
                 <th>Year</th>
