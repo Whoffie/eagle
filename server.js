@@ -6,7 +6,13 @@ const session = require("express-session")
 const sqlStore = require("express-mysql-session")(session)
 const bcrypt = require("bcrypt")
 const env = require("dotenv").config()
-const port = 8080
+const port = process.env.PORT || 443
+
+const https = require("https")
+const fs = require("fs")
+
+const privateKey = fs.readFileSync(process.env.SSL_KEY_PATH || '/etc/letsencrypt/live/eaglevailcondo.com-0003/privkey.pem')
+const certificate = fs.readFileSync(process.env.SSL_CERT_PATH || '/etc/letsencrypt/live/eaglevailcondo.com-0003/fullchain.pem')
 
 con = sql.createConnection({ // credentials for connection to database
     host: process.env.DB_HOST,
@@ -1071,6 +1077,13 @@ app.post("/myschedule/tradeable/false", (req, res) => {
     }
 })
 
-app.listen(port, () => {
-    console.log("Site is currently active and running")
+const credentials = {
+    key: privateKey,
+    cert: certificate
+}
+
+const httpsServer = https.createServer(credentials, app)
+
+httpsServer.listen(port, () => {
+    console.log("Site is currently active and running on HTTPS port " + port)
 })
