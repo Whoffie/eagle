@@ -37,9 +37,9 @@ const sqlSession = new sqlStore({ // for session storing (so the website remembe
     createDatabaseTable: true
 })
 
-app.use(session({ // 
+app.use(session({ //
     name: "session",
-    secret: "2p4gj2pig4j2p4gjiipj", // random
+    secret: process.env.SESSION_SECRET,
     saveUninitialized: false,
     resave: false,
     store: sqlSession,
@@ -105,7 +105,7 @@ app.post("/login", (req, res) => {
             con.query(stmt, [req.body.email], (err, val) => {
                 bcrypt.compare(req.body.password, val[0]?.password, function(err, result) {
                     if (result == true) {
-                        var stmt = "SELECT `activated`, `admin` FROM `userdata` WHERE `id`='?'"
+                        var stmt = "SELECT `activated`, `admin` FROM `userdata` WHERE `id`=?"
 
                         con.query(stmt, [val[0].id], (err, userAttributes) => {
                             if (userAttributes[0].activated == 1) {
@@ -1023,14 +1023,22 @@ app.get("/myschedule", (req, res) => {
     }
 })
 
-app.post("/myschedule/tradeable/true", (req, res) => { // at some point fix security problems here but it's not really that urgent
+app.post("/myschedule/tradeable/true", (req, res) => {
     if (req.session.auth) {
         if (req.body.rowid) { // rowid that points to the row being made tradeable
-            let stmt = "UPDATE `schedule` SET `tradeable`=1 WHERE `id`=?"
+            let stmt = "SELECT `userGroup` FROM `userdata` WHERE `id`=?"
 
-            con.query(stmt, [req.body.rowid])
+            con.query(stmt, [req.session.uid], (err, user) => {
+                if (user.length > 0) {
+                    let stmt = "UPDATE `schedule` SET `tradeable`=1 WHERE `id`=? AND `actualID`=?"
 
-            res.redirect("/myschedule")
+                    con.query(stmt, [req.body.rowid, user[0].userGroup])
+
+                    res.redirect("/myschedule")
+                }else {
+                    res.redirect("/myschedule")
+                }
+            })
         }else {
             res.redirect("/myschedule")
         }
@@ -1042,11 +1050,19 @@ app.post("/myschedule/tradeable/true", (req, res) => { // at some point fix secu
 app.post("/myschedule/tradeable/false", (req, res) => {
     if (req.session.auth) {
         if (req.body.rowid) { // rowid that points to the row being made tradeable
-            let stmt = "UPDATE `schedule` SET `tradeable`=0 WHERE `id`=?"
+            let stmt = "SELECT `userGroup` FROM `userdata` WHERE `id`=?"
 
-            con.query(stmt, [req.body.rowid])
+            con.query(stmt, [req.session.uid], (err, user) => {
+                if (user.length > 0) {
+                    let stmt = "UPDATE `schedule` SET `tradeable`=0 WHERE `id`=? AND `actualID`=?"
 
-            res.redirect("/myschedule")
+                    con.query(stmt, [req.body.rowid, user[0].userGroup])
+
+                    res.redirect("/myschedule")
+                }else {
+                    res.redirect("/myschedule")
+                }
+            })
         }else {
             res.redirect("/myschedule")
         }
