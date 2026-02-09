@@ -22,6 +22,7 @@
         <img src="/img/vailcondoassociates.jpg" alt="Vail Condo Associates"><br>
         <div class="form-container">
           <form action="/user/selfedit" method="post">
+            <input type="hidden" name="_csrf" value="{{csrfToken}}">
             <label class="formLabel">Name <span class="danger">*</span></label><br>
             <div class="field-wrapper">
               <input type="text" name="fName" class="halve" placeholder="First name" value="{{firstname}}" autocomplete="off" required>
@@ -31,9 +32,13 @@
             <div class="field-wrapper">
               <input type="email" name="email" value="{{email}}" autocomplete="off" required>
             </div>
-            <label class="formLabel">Password <span class="danger">*</span></label>
+            <label class="formLabel">Current Password <span class="danger">*</span></label>
             <div class="field-wrapper">
-              <input type="password" name="password" value="{{password}}" autocomplete="off" required>
+              <input type="password" name="currentPassword" autocomplete="off" required>
+            </div>
+            <label class="formLabel">New Password <span class="secondary">(leave blank to keep current)</span></label>
+            <div class="field-wrapper">
+              <input type="password" name="newPassword" autocomplete="off">
             </div>
             <label class="formLabel">Address <span class="danger">*</span></label>
             <div class="field-wrapper">
@@ -85,6 +90,7 @@
           </div>
           <div class="spacer">
             <form action="/settings/webmaster" method="post">
+              <input type="hidden" name="_csrf" value="{{csrfToken}}">
               <label>Webmaster Contact Email</label><br>
               <input type="text" class="inline smallish" name="email" placeholder="Administration Contact Email" value="{{webmaster}}">
               <input type="hidden" name="from" value="selfedit">

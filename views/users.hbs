@@ -25,6 +25,7 @@
       <div class="left-container">
         <h2 class="spacer">Create New Partner Unit</h2>
         <form action="/group/add" method="post">
+          <input type="hidden" name="_csrf" value="{{csrfToken}}">
           <div class="field-wrapper">
             <input type="text" placeholder="Partner Unit Name" name="gname" maxlength="100" required>
             <input type="number" name="snowbirds" class="input-half" placeholder="# of Snowbirds shares" min="0" required>
@@ -118,6 +119,7 @@
         <div class="left-container-half">
           <h2 class="spacer">Snowbirds Schedule</h2>
           <form action="/schedule/edit" method="post" id="schedule">
+          <input type="hidden" name="_csrf" value="{{csrfToken}}">
           {{#each userGroups}}
             {{#if this.snowbirds}}
             <select name="snowbirds{{sb_increment}}" class="schedule-select">
@@ -184,6 +186,7 @@
           <a href="#"><span class="close" onclick="geditClose({{this.id}})"><i class="ti ti-square-x"></i></span></a>
           <h1>Editing Partner Unit "{{this.groupName}}"</h1><br>
           <form action="/group/edit" method="post">
+            <input type="hidden" name="_csrf" value="{{csrfToken}}">
             <div class="spacer">
               <label>Partner Unit Name</label>
               <input type="text" placeholder="Partner Partner Unit Name" name="gname" value="{{this.groupName}}" maxlength="100" required>
@@ -226,6 +229,7 @@
           <a href="#"><span class="close" onclick="ueditClose({{this.id}})"><i class="ti ti-square-x"></i></span></a>
           <h1>Editing Partner "{{this.firstName}} {{this.lastName}}"</h1><br>
           <form action="/user/edit" method="post">
+            <input type="hidden" name="_csrf" value="{{csrfToken}}">
             <div class="spacer">
               <label>Email <span class="danger">*</span></label><br>
               <input type="email" name="email" placeholder="Email" value="{{this.email}}" required>
@@ -302,6 +306,7 @@
           </div>
           <div class="spacer">
             <form action="/settings/webmaster" method="post">
+              <input type="hidden" name="_csrf" value="{{csrfToken}}">
               <label>Webmaster Contact Email</label><br>
               <input type="text" class="inline smallish" name="email" placeholder="Administration Contact Email" value="{{webmaster}}">
               <input type="hidden" name="from" value="admin">

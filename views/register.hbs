@@ -16,6 +16,7 @@
         <p>Your account will not be created immediately; it will first have to be approved by an administrator</p>
         <div class="form-container">
           <form action="/register" method="post">
+            <input type="hidden" name="_csrf" value="{{csrfToken}}">
             <label class="formLabel">Name <span class="danger">*</span></label><br>
             <div class="field-wrapper">
               <input type="text" name="fName" class="halve" placeholder="First name" required>

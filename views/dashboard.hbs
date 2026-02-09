@@ -29,6 +29,7 @@
       </div>
       <h4>Select year</h4>
       <form action="/dashboard/filter" method="post">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
         <div class="spacer inline">
           <select name="yearSelect" id="yearSelect" autocomplete="off">
             {{#each year}}
@@ -123,6 +124,7 @@
           <h1>Changing Planned Schedule From "{{this.actualGroup}}" on {{this.startDate}}</h1>
           <h3>Ensure that both parties involved in this switch approve of it. This change will be logged.</h3><br>
           <form action="/schedule/edit/actual" method="post">
+            <input type="hidden" name="_csrf" value="{{csrfToken}}">
             <div class="spacer">
               <select name="newActual">
                 {{#each ../userGroups}}
@@ -149,6 +151,7 @@
             <h1>Editing Notes for "{{this.actualGroup}}" on {{this.startDate}}</h1>
           </div>
           <form action="/schedule/edit/notes" method="post">
+            <input type="hidden" name="_csrf" value="{{csrfToken}}">
             <textarea name="notes" rows="10">{{this.notes}}</textarea>
             <input type="hidden" name="id" value="{{this.id}}">
             <input type="hidden" name="year" value="{{../setYear}}">
@@ -172,6 +175,7 @@
           </div>
           <div class="spacer">
             <form action="/settings/webmaster" method="post">
+              <input type="hidden" name="_csrf" value="{{csrfToken}}">
               <label>Webmaster Contact Email</label><br>
               <input type="text" class="inline smallish" name="email" placeholder="Administration Contact Email" value="{{webmaster}}">
               <input type="hidden" name="from" value="dashboard">
