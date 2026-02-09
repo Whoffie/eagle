@@ -11,8 +11,8 @@ const port = process.env.PORT || 443
 const https = require("https")
 const fs = require("fs")
 
-const privateKey = fs.readFileSync(process.env.SSL_KEY_PATH || '/etc/letsencrypt/live/eaglevailcondo.com-0003/privkey.pem')
-const certificate = fs.readFileSync(process.env.SSL_CERT_PATH || '/etc/letsencrypt/live/eaglevailcondo.com-0003/fullchain.pem')
+const privateKey = fs.readFileSync(process.env.SSL_KEY_PATH)
+const certificate = fs.readFileSync(process.env.SSL_CERT_PATH)
 
 con = sql.createConnection({ // credentials for connection to database
     host: process.env.DB_HOST,
