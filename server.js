@@ -51,7 +51,11 @@ app.use(session({ //
     saveUninitialized: false,
     resave: false,
     store: sqlSession,
-    cookie: { maxAge: 3600000, secure: true, httpOnly: true } // cookies are only stored for an hour (see maxAge)-- once timeout is reached user cannot perform any actions and must login again
+    cookie: {
+        maxAge: 4 * 60 * 60 * 1000, // 4 hours (reduced CSRF false positives from 1 hour sessions)
+        secure: true,
+        httpOnly: true
+    }
 }))
 
 app.set("view engine", "hbs") // Use handlebars as our view engine
@@ -89,11 +93,14 @@ app.get("/", (req, res) => {
                 res.locals.webmaster = webmaster[0].value
             }
 
-            if (!req.session.success) {
-                res.render("login")
-            }else {
+            // Check for session expired error
+            if (req.query.error === 'session_expired') {
+                res.render("login", { error: "Your session has expired. Please log in again to continue." })
+            } else if (req.session.success) {
                 res.render("login", { success: req.session.success })
                 req.session.success = null
+            } else {
+                res.render("login")
             }
         })
     }
@@ -1105,6 +1112,21 @@ app.post("/myschedule/tradeable/false", (req, res) => {
         }
     }else {
         res.redirect("/")
+    }
+})
+
+// CSRF error handler - MUST be after all routes
+// Catches CSRF token errors and redirects gracefully
+app.use((err, req, res, next) => {
+    if (err.code === 'EBADCSRFTOKEN') {
+        // CSRF token was invalid - likely session expired
+        console.log('CSRF token error - redirecting to login')
+        req.session.destroy(() => {
+            res.redirect('/?error=session_expired')
+        })
+    } else {
+        // Pass other errors to default handler
+        next(err)
     }
 })
 
