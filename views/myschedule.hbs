@@ -55,7 +55,7 @@
         <td>{{this.groupName}}</td>
         <td>{{this.actualGroup}}</td>
         <td><a href="#" onclick="notesModal({{this.id}})"><i class="ti ti-notes"></i></a></td>
-        {{#ifEquals this.tradeable 0}}<td><form action="/myschedule/tradeable/true" method="POST"><input type="hidden" name="_csrf" value="{{csrfToken}}"><input type="checkbox" name="available{{this.id}}" onChange="this.form.submit()"><input type="hidden" name="rowid" value="{{this.id}}"></form></td>{{else}} <td><form action="/myschedule/tradeable/false" method="POST"><input type="hidden" name="_csrf" value="{{csrfToken}}"><input type="checkbox" name="available{{this.id}}" onChange="this.form.submit()" checked><input type="hidden" name="rowid" value="{{this.id}}"></form></td>{{/ifEquals}}
+        {{#ifEquals this.tradeable 0}}<td><form action="/myschedule/tradeable/true" method="POST"><input type="hidden" name="_csrf" value="{{@root.csrfToken}}"><input type="checkbox" name="available{{this.id}}" onChange="this.form.submit()"><input type="hidden" name="rowid" value="{{this.id}}"></form></td>{{else}} <td><form action="/myschedule/tradeable/false" method="POST"><input type="hidden" name="_csrf" value="{{@root.csrfToken}}"><input type="checkbox" name="available{{this.id}}" onChange="this.form.submit()" checked><input type="hidden" name="rowid" value="{{this.id}}"></form></td>{{/ifEquals}}
       </tr>
       {{else}}
       <tr class="highlight-row">
@@ -65,7 +65,7 @@
         <td>{{this.groupName}}</td>
         <td>{{this.actualGroup}}</td>
         <td><a href="#" onclick="notesModal({{this.id}})"><i class="ti ti-notes"></i></a></td>
-        {{#ifEquals this.tradeable 0}}<td><form action="/myschedule/tradeable/true" method="POST"><input type="hidden" name="_csrf" value="{{csrfToken}}"><input type="checkbox" name="available{{this.id}}" onChange="this.form.submit()"><input type="hidden" name="rowid" value="{{this.id}}"></form></td>{{else}} <td><form action="/myschedule/tradeable/false" method="POST"><input type="hidden" name="_csrf" value="{{csrfToken}}"><input type="checkbox" name="available{{this.id}}" onChange="this.form.submit()" checked><input type="hidden" name="rowid" value="{{this.id}}"></form></td>{{/ifEquals}}
+        {{#ifEquals this.tradeable 0}}<td><form action="/myschedule/tradeable/true" method="POST"><input type="hidden" name="_csrf" value="{{@root.csrfToken}}"><input type="checkbox" name="available{{this.id}}" onChange="this.form.submit()"><input type="hidden" name="rowid" value="{{this.id}}"></form></td>{{else}} <td><form action="/myschedule/tradeable/false" method="POST"><input type="hidden" name="_csrf" value="{{@root.csrfToken}}"><input type="checkbox" name="available{{this.id}}" onChange="this.form.submit()" checked><input type="hidden" name="rowid" value="{{this.id}}"></form></td>{{/ifEquals}}
       </tr>
       {{/ifEquals}}
       {{else}}
@@ -86,7 +86,7 @@
         <td>{{this.groupName}}</td>
         <td>{{this.actualGroup}}</td>
         <td><a href="#" onclick="notesModal({{this.id}})"><i class="ti ti-notes"></i></a></td>
-        {{#ifEquals this.tradeable 0}}<td><form action="/myschedule/tradeable/true" method="POST"><input type="hidden" name="_csrf" value="{{csrfToken}}"><input type="checkbox" name="available{{this.id}}" onChange="this.form.submit()"><input type="hidden" name="rowid" value="{{this.id}}"></form></td>{{else}} <td><form action="/myschedule/tradeable/false" method="POST"><input type="hidden" name="_csrf" value="{{csrfToken}}"><input type="checkbox" name="available{{this.id}}" onChange="this.form.submit()" checked><input type="hidden" name="rowid" value="{{this.id}}"></form></td>{{/ifEquals}}
+        {{#ifEquals this.tradeable 0}}<td><form action="/myschedule/tradeable/true" method="POST"><input type="hidden" name="_csrf" value="{{@root.csrfToken}}"><input type="checkbox" name="available{{this.id}}" onChange="this.form.submit()"><input type="hidden" name="rowid" value="{{this.id}}"></form></td>{{else}} <td><form action="/myschedule/tradeable/false" method="POST"><input type="hidden" name="_csrf" value="{{@root.csrfToken}}"><input type="checkbox" name="available{{this.id}}" onChange="this.form.submit()" checked><input type="hidden" name="rowid" value="{{this.id}}"></form></td>{{/ifEquals}}
       </tr>
       {{/ifEquals}}
       {{/ifEquals}}
@@ -102,7 +102,7 @@
             <h1>Editing Notes for "{{this.actualGroup}}" on {{this.startDate}}</h1>
           </div>
           <form action="/schedule/edit/notes" method="post">
-            <input type="hidden" name="_csrf" value="{{csrfToken}}">
+            <input type="hidden" name="_csrf" value="{{@root.csrfToken}}">
             <div class="spacer">
               <textarea name="notes" rows="10">{{this.notes}}</textarea>
             </div>

@@ -124,7 +124,7 @@
           <h1>Changing Planned Schedule From "{{this.actualGroup}}" on {{this.startDate}}</h1>
           <h3>Ensure that both parties involved in this switch approve of it. This change will be logged.</h3><br>
           <form action="/schedule/edit/actual" method="post">
-            <input type="hidden" name="_csrf" value="{{csrfToken}}">
+            <input type="hidden" name="_csrf" value="{{@root.csrfToken}}">
             <div class="spacer">
               <select name="newActual">
                 {{#each ../userGroups}}
@@ -151,7 +151,7 @@
             <h1>Editing Notes for "{{this.actualGroup}}" on {{this.startDate}}</h1>
           </div>
           <form action="/schedule/edit/notes" method="post">
-            <input type="hidden" name="_csrf" value="{{csrfToken}}">
+            <input type="hidden" name="_csrf" value="{{@root.csrfToken}}">
             <textarea name="notes" rows="10">{{this.notes}}</textarea>
             <input type="hidden" name="id" value="{{this.id}}">
             <input type="hidden" name="year" value="{{../setYear}}">

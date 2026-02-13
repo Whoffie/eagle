@@ -186,7 +186,7 @@
           <a href="#"><span class="close" onclick="geditClose({{this.id}})"><i class="ti ti-square-x"></i></span></a>
           <h1>Editing Partner Unit "{{this.groupName}}"</h1><br>
           <form action="/group/edit" method="post">
-            <input type="hidden" name="_csrf" value="{{csrfToken}}">
+            <input type="hidden" name="_csrf" value="{{@root.csrfToken}}">
             <div class="spacer">
               <label>Partner Unit Name</label>
               <input type="text" placeholder="Partner Partner Unit Name" name="gname" value="{{this.groupName}}" maxlength="100" required>
@@ -229,7 +229,7 @@
           <a href="#"><span class="close" onclick="ueditClose({{this.id}})"><i class="ti ti-square-x"></i></span></a>
           <h1>Editing Partner "{{this.firstName}} {{this.lastName}}"</h1><br>
           <form action="/user/edit" method="post">
-            <input type="hidden" name="_csrf" value="{{csrfToken}}">
+            <input type="hidden" name="_csrf" value="{{@root.csrfToken}}">
             <div class="spacer">
               <label>Email <span class="danger">*</span></label><br>
               <input type="email" name="email" placeholder="Email" value="{{this.email}}" required>

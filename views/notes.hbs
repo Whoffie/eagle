@@ -65,7 +65,7 @@
             </div>
             <div class="note-alt-content ntedit-{{this.id}}">
               <form action="/note/edit" method="post">
-                <input type="hidden" name="_csrf" value="{{csrfToken}}">
+                <input type="hidden" name="_csrf" value="{{@root.csrfToken}}">
                 <div class="spacer">
                   <input type="text" name="subject" value="{{this.subject}}" required>
                 </div>
